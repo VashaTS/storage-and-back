@@ -184,6 +184,9 @@ public class StorageBackServerTest {
 				helper.assertTrue(helper.getBlockState(pos).getValue(AbstractFurnaceBlock.LIT), fuels[i] + " should light the furnace");
 				FurnaceBlockEntity furnace = helper.getBlockEntity(pos, FurnaceBlockEntity.class);
 				helper.assertTrue(furnace.getItem(1).isEmpty(), fuels[i] + " should be consumed as fuel");
+				int total = furnace.saveWithoutMetadata(helper.getLevel().registryAccess()).getIntOr("lit_total_time", 0);
+				int expected = i == 0 ? 16000 : 21600;
+				helper.assertTrue(total == expected, fuels[i] + " burn time should be " + expected + ", got " + total);
 			}
 			helper.succeed();
 		});
