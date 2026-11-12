@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "storageback:block/flint_block"
+    }
+  }
+}

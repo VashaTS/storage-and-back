@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "storageback:carrot_crate",
+    "storageback:potato_crate",
+    "storageback:beetroot_crate",
+    "storageback:apple_crate"
+  ]
+}

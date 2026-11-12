@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "storageback",
+	"version": "${version}",
+	"name": "Storage & Back",
+	"description": "Storage blocks for flint, sugar cane, charcoal, gunpowder, blaze rods, leather, feathers, ender pearls, rotten flesh and crops, plus recipes that turn vanilla blocks back into their items. English and Polish translations.",
+	"authors": [
+		"Vasha"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/storage-and-back",
+		"sources": "https://github.com/VashaTS/storage-and-back",
+		"issues": "https://github.com/VashaTS/storage-and-back/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/storageback/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.vsh33.storageback.StorageBack"
+		],
+		"modmenu": [
+			"net.vsh33.storageback.client.ModMenuIntegration"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.20.1",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"cloth-config": "*",
+		"modmenu": "*"
+	}
+}

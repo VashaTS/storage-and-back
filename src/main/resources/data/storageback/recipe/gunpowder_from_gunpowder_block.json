@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "storageback:gunpowder_block"
+  ],
+  "result": {
+    "id": "minecraft:gunpowder",
+    "count": 9
+  }
+}

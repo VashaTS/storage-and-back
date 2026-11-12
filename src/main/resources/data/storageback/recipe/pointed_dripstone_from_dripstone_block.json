@@ -1,0 +1,17 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "storageback:config",
+      "option": "back_recipes"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:dripstone_block"
+  ],
+  "result": {
+    "id": "minecraft:pointed_dripstone",
+    "count": 4
+  }
+}

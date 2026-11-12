@@ -1,0 +1,17 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "storageback:config",
+      "option": "back_recipes"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:quartz_block"
+  ],
+  "result": {
+    "id": "minecraft:quartz",
+    "count": 4
+  }
+}

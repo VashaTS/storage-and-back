@@ -1,0 +1,21 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "storageback:config",
+      "option": "back_recipes"
+    },
+    {
+      "condition": "storageback:config",
+      "option": "balancing_changes"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:magma_block"
+  ],
+  "result": {
+    "id": "minecraft:magma_cream",
+    "count": 4
+  }
+}

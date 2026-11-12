@@ -1,0 +1,17 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "storageback:config",
+      "option": "back_recipes"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:prismarine_bricks"
+  ],
+  "result": {
+    "id": "minecraft:prismarine_shard",
+    "count": 9
+  }
+}

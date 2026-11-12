@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "storageback:sugar_cane_bundle",
+    "storageback:leather_block",
+    "storageback:feather_block",
+    "storageback:rotten_flesh_block"
+  ]
+}

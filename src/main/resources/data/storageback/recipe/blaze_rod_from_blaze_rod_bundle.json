@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "storageback:blaze_rod_bundle"
+  ],
+  "result": {
+    "id": "minecraft:blaze_rod",
+    "count": 9
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "storageback:flint_block",
+    "storageback:charcoal_block",
+    "storageback:blaze_rod_bundle",
+    "storageback:ender_pearl_block"
+  ]
+}

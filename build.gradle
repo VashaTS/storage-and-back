@@ -1,0 +1,97 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+}
+
+version = project.version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	// Optional integrations (Cloth Config, Mod Menu) are pulled from Modrinth's Maven.
+	exclusiveContent {
+		forRepository {
+			maven { name = "Modrinth"; url = "https://api.modrinth.com/maven" }
+		}
+		filter { includeGroup "maven.modrinth" }
+	}
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"storageback" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+fabricApi {
+	// Server game tests (./gradlew runGameTest, also part of ./gradlew build): recipes, conflicts, config toggle, block behaviour.
+	// Client game test (xvfb-run -a ./gradlew runClientGameTest): screenshots of every block.
+	configureTests {
+		createSourceSet = true
+		modId = "storageback-test"
+		enableGameTests = true
+		enableClientGameTests = true
+		eula = true
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// OPTIONAL at runtime: the mod checks FabricLoader.isModLoaded before touching them.
+	compileOnly "maven.modrinth:cloth-config:${project.cloth_config_version}"
+	compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
+	if (project.findProperty("withConfigMods") == "true") {
+		// ./gradlew runClient -PwithConfigMods=true  -> try the Mod Menu / Cloth Config screen in dev
+		localRuntime "maven.modrinth:cloth-config:${project.cloth_config_version}"
+		localRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
+	}
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+	def projectName = project.name
+	inputs.property "projectName", projectName
+
+	from("LICENSE") {
+		rename { "${it}_$projectName"}
+	}
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			from components.java
+		}
+	}
+	repositories {
+	}
+}
