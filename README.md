@@ -18,19 +18,19 @@ and are tagged `c:storage_blocks/<item>` for other mods.
 
 | | Block | Made from | Notes |
 |---|---|---|---|
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/flint_block.png" width="32"> | **Flint Block** | 9 Flint | Stone-like, needs a pickaxe. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/sugar_cane_bundle.png" width="32"> | **Sugar Cane Bundle** | 9 Sugar Cane | Rotates like a log (axis pillar), burns, compostable. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/charcoal_block.png" width="32"> | **Charcoal Block** | 9 Charcoal | Furnace fuel: 16000 ticks (80 items), same as a Block of Coal. Burns. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/gunpowder_block.png" width="32"> | **Gunpowder Block** | 9 Gunpowder | Falls like sand. Does **not** explode. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/blaze_rod_bundle.png" width="32"> | **Blaze Rod Bundle** | 9 Blaze Rods | Axis pillar, gives off a little light (level 5). Fuel: 21600 ticks (108 items). |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/leather_block.png" width="32"> | **Leather Block** | 9 Leather | Soft, wool-like block with stitching. Burns. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/feather_block.png" width="32"> | **Feather Block** | 9 Feathers | Landing on it deals only 20% fall damage, like a hay bale. Burns. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/ender_pearl_block.png" width="32"> | **Ender Pearl Block** | 9 Ender Pearls | Store pearls (they only stack to 16) 9 per slot. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/rotten_flesh_block.png" width="32"> | **Rotten Flesh Block** | 9 Rotten Flesh | Mob-farm storage. Compostable. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/carrot_crate.png" width="32"> | **Carrot Crate** | 9 Carrots | Wooden crate (axe). Burns, compostable. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/potato_crate.png" width="32"> | **Potato Crate** | 9 Potatoes | Wooden crate (axe). Burns, compostable. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/beetroot_crate.png" width="32"> | **Beetroot Crate** | 9 Beetroots | Wooden crate (axe). Burns, compostable. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/apple_crate.png" width="32"> | **Apple Crate** | 9 Apples | Wooden crate (axe). Burns, compostable. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/flint_block.png" width="32" alt="Flint Block"> | **Flint Block** | 9 Flint | Stone-like, needs a pickaxe. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/sugar_cane_bundle.png" width="32" alt="Sugar Cane Bundle"> | **Sugar Cane Bundle** | 9 Sugar Cane | Rotates like a log (axis pillar), burns, compostable. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/charcoal_block.png" width="32" alt="Charcoal Block"> | **Charcoal Block** | 9 Charcoal | Furnace fuel: 16000 ticks (80 items), same as a Block of Coal. Burns. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/gunpowder_block.png" width="32" alt="Gunpowder Block"> | **Gunpowder Block** | 9 Gunpowder | Falls like sand. Does **not** explode. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/blaze_rod_bundle.png" width="32" alt="Blaze Rod Bundle"> | **Blaze Rod Bundle** | 9 Blaze Rods | Axis pillar, gives off a little light (level 5). Fuel: 21600 ticks (108 items). |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/leather_block.png" width="32" alt="Leather Block"> | **Leather Block** | 9 Leather | Soft, wool-like block with stitching. Burns. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/feather_block.png" width="32" alt="Feather Block"> | **Feather Block** | 9 Feathers | Landing on it deals only 20% fall damage, like a hay bale. Burns. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/ender_pearl_block.png" width="32" alt="Ender Pearl Block"> | **Ender Pearl Block** | 9 Ender Pearls | Store pearls (they only stack to 16) 9 per slot. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/rotten_flesh_block.png" width="32" alt="Rotten Flesh Block"> | **Rotten Flesh Block** | 9 Rotten Flesh | Mob-farm storage. Compostable. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/carrot_crate.png" width="32" alt="Carrot Crate"> | **Carrot Crate** | 9 Carrots | Wooden crate (axe). Burns, compostable. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/potato_crate.png" width="32" alt="Potato Crate"> | **Potato Crate** | 9 Potatoes | Wooden crate (axe). Burns, compostable. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/beetroot_crate.png" width="32" alt="Beetroot Crate"> | **Beetroot Crate** | 9 Beetroots | Wooden crate (axe). Burns, compostable. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/apple_crate.png" width="32" alt="Apple Crate"> | **Apple Crate** | 9 Apples | Wooden crate (axe). Burns, compostable. |
 
 ## Back recipes
 
