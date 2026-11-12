@@ -14,7 +14,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:beetroot_from_beetroot_crate"
+        "recipe": "storageback:beetroot_from_beetroot_crate"
       }
     }
   },

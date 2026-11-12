@@ -14,7 +14,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:rotten_flesh_from_rotten_flesh_block"
+        "recipe": "storageback:rotten_flesh_from_rotten_flesh_block"
       }
     }
   },

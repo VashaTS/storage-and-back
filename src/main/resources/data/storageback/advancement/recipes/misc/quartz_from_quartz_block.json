@@ -20,7 +20,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:quartz_from_quartz_block"
+        "recipe": "storageback:quartz_from_quartz_block"
       }
     }
   },

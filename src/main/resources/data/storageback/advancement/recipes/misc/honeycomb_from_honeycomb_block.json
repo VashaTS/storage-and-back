@@ -20,7 +20,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:honeycomb_from_honeycomb_block"
+        "recipe": "storageback:honeycomb_from_honeycomb_block"
       }
     }
   },

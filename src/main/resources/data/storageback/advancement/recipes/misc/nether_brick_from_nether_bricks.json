@@ -20,7 +20,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:nether_brick_from_nether_bricks"
+        "recipe": "storageback:nether_brick_from_nether_bricks"
       }
     }
   },

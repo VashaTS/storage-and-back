@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
+import net.fabricmc.fabric.api.registry.CompostableRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -159,10 +159,12 @@ public class StorageBackServerTest {
 		helper.assertTrue(flammable.get(ModBlocks.FLINT_BLOCK) == null || flammable.get(ModBlocks.FLINT_BLOCK).getBurnOdds() == 0, "flint must not burn");
 		for (Block b : new Block[]{ModBlocks.SUGAR_CANE_BUNDLE, ModBlocks.ROTTEN_FLESH_BLOCK, ModBlocks.CARROT_CRATE, ModBlocks.POTATO_CRATE,
 				ModBlocks.BEETROOT_CRATE, ModBlocks.APPLE_CRATE}) {
-			helper.assertTrue(new ItemStack(b).has(DataComponents.COMPOSTABLE), b + " should be compostable");
+			Float chance = CompostableRegistry.INSTANCE.get(b);
+			helper.assertTrue(chance != null && chance > 0, b + " should be compostable");
 		}
-		helper.assertTrue(helper.getLevel().getServer().reloadableRegistries().lookup().lookupOrThrow(Registries.CONTEXT_INT_PROVIDER)
-				.get(ModBlocks.COOKING_TIME_BLAZE_ROD_BUNDLE).isPresent(), "blaze rod bundle burn time must be registered");
+		var fuel = helper.getLevel().fuelValues();
+		helper.assertTrue(fuel.burnDuration(new ItemStack(ModBlocks.CHARCOAL_BLOCK)) == 16000, "charcoal block burn time");
+		helper.assertTrue(fuel.burnDuration(new ItemStack(ModBlocks.BLAZE_ROD_BUNDLE)) == 21600, "blaze rod bundle burn time");
 		helper.assertTrue(ModBlocks.BLAZE_ROD_BUNDLE.defaultBlockState().getLightEmission() > 0, "blaze rod bundle should glow");
 		helper.succeed();
 	}

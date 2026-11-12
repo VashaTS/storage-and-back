@@ -14,7 +14,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:blaze_rod_from_blaze_rod_bundle"
+        "recipe": "storageback:blaze_rod_from_blaze_rod_bundle"
       }
     }
   },

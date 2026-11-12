@@ -14,7 +14,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:feather_from_feather_block"
+        "recipe": "storageback:feather_from_feather_block"
       }
     }
   },

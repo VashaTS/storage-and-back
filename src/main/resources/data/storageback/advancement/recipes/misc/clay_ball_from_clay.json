@@ -20,7 +20,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:clay_ball_from_clay"
+        "recipe": "storageback:clay_ball_from_clay"
       }
     }
   },

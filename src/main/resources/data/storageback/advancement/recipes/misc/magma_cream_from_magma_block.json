@@ -24,7 +24,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:magma_cream_from_magma_block"
+        "recipe": "storageback:magma_cream_from_magma_block"
       }
     }
   },

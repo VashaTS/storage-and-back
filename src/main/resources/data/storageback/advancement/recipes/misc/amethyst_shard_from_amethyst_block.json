@@ -24,7 +24,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:amethyst_shard_from_amethyst_block"
+        "recipe": "storageback:amethyst_shard_from_amethyst_block"
       }
     }
   },

@@ -14,7 +14,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:charcoal_from_charcoal_block"
+        "recipe": "storageback:charcoal_from_charcoal_block"
       }
     }
   },

@@ -14,7 +14,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:ender_pearl_block"
+        "recipe": "storageback:ender_pearl_block"
       }
     }
   },

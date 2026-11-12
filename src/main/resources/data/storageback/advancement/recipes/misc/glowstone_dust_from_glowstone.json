@@ -20,7 +20,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:glowstone_dust_from_glowstone"
+        "recipe": "storageback:glowstone_dust_from_glowstone"
       }
     }
   },

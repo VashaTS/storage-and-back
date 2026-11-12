@@ -20,7 +20,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:brick_from_bricks"
+        "recipe": "storageback:brick_from_bricks"
       }
     }
   },

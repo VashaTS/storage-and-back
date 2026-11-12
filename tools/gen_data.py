@@ -55,7 +55,7 @@ def advancement(recipe_id, item, conditions=None):
         "parent": "minecraft:recipes/root",
         "criteria": {
             "has_item": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": item}]}},
-            "has_the_recipe": {"trigger": "minecraft:recipe_unlocked", "conditions": {"recipes": recipe_id}},
+            "has_the_recipe": {"trigger": "minecraft:recipe_unlocked", "conditions": {"recipe": recipe_id}},  # 26.3: "recipes"
         },
         "requirements": [["has_the_recipe", "has_item"]],
         "rewards": {"recipes": [recipe_id]},
@@ -149,13 +149,8 @@ def main():
         for bid, ing, *_ in BLOCKS:
             write(f"{base}/storage_blocks/{ing}.json", {"replace": False, "values": [f"{NS}:{bid}"]})
 
-    # fuel: 9 blaze rods (9 x 2400 ticks); charcoal block reuses minecraft:cooking/time_coal_block
-    write(f"{D}/context_int_provider/cooking/time_blaze_rod_bundle.json", {
-        "type": "minecraft:div", "left": 21600,
-        "right": {"type": "minecraft:conditional", "condition": "minecraft:block/fast_cooking",
-                  "on_false": "minecraft:cooking/normal_burn_time_reduction_factor",
-                  "on_true": "minecraft:cooking/fast_burn_time_reduction_factor"},
-    })
+    # 26.2: fuel and composting values are registered in code (ModBlocks), not data
+    shutil.rmtree(f"{D}/context_int_provider", ignore_errors=True)
 
     en.update({
         "config.storageback.title": "Storage & Back",

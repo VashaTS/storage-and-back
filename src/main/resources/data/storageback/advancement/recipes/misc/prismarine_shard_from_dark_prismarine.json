@@ -20,7 +20,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:prismarine_shard_from_dark_prismarine"
+        "recipe": "storageback:prismarine_shard_from_dark_prismarine"
       }
     }
   },

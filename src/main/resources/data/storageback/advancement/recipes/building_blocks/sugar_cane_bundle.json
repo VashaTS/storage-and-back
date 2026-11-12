@@ -14,7 +14,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:sugar_cane_bundle"
+        "recipe": "storageback:sugar_cane_bundle"
       }
     }
   },

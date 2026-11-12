@@ -20,7 +20,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "storageback:snowball_from_snow_block"
+        "recipe": "storageback:snowball_from_snow_block"
       }
     }
   },
