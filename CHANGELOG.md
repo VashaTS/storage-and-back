@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0
+* Added sandstone → 4 sand and red sandstone → 4 red sand back recipes.
+
 ## 1.0.0
 * The 26.2 build requires Fabric Loader 0.19.5+ (not 0.20.1).
 * First release for Minecraft 26.3 and 26.2 (Fabric).
