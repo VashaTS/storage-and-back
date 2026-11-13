@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.vsh33.storageback.StorageBack;
+import net.vsh33.storageback.block.EnderPearlBlock;
 import net.vsh33.storageback.block.ModBlocks;
 import net.vsh33.storageback.config.StorageBackConfig;
 
@@ -167,6 +168,11 @@ public class StorageBackServerTest {
 		helper.assertTrue(fuel.burnDuration(new ItemStack(ModBlocks.CHARCOAL_BLOCK)) == 16000, "charcoal block burn time");
 		helper.assertTrue(fuel.burnDuration(new ItemStack(ModBlocks.BLAZE_ROD_BUNDLE)) == 21600, "blaze rod bundle burn time");
 		helper.assertTrue(ModBlocks.BLAZE_ROD_BUNDLE.defaultBlockState().getLightEmission() > 0, "blaze rod bundle should glow");
+		var pearl = ModBlocks.ENDER_PEARL_BLOCK.defaultBlockState();
+		helper.assertFalse(Block.isShapeFullBlock(EnderPearlBlock.SHAPE), "ender pearl block must not be a full cube");
+		helper.assertTrue(pearl.propagatesSkylightDown(), "light should pass through the ender pearl block");
+		helper.assertFalse(pearl.canOcclude(), "ender pearl block must not occlude neighbours");
+		helper.assertFalse(pearl.isSolidRender(), "ender pearl block must not be a solid render cube");
 		helper.succeed();
 	}
 

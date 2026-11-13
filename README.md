@@ -25,7 +25,7 @@ and are tagged `c:storage_blocks/<item>` for other mods.
 | <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/blaze_rod_bundle.png" width="32"> | **Blaze Rod Bundle** | 9 Blaze Rods | Axis pillar, gives off a little light (level 5). Fuel: 21600 ticks (108 items). |
 | <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/leather_block.png" width="32"> | **Leather Block** | 9 Leather | Soft, wool-like block with stitching. Burns. |
 | <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/feather_block.png" width="32"> | **Feather Block** | 9 Feathers | Landing on it deals only 20% fall damage, like a hay bale. Burns. |
-| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/ender_pearl_block.png" width="32"> | **Ender Pearl Block** | 9 Ender Pearls | Store pearls (they only stack to 16) 9 per slot. |
+| <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/ender_pearl_block.png" width="32"> | **Ender Pearl Block** | 9 Ender Pearls | A cluster of 9 touching pearls (8 at the corners, 1 in the centre) that you can see between. Pearls only stack to 16, so this stores 9 per slot. |
 | <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/rotten_flesh_block.png" width="32"> | **Rotten Flesh Block** | 9 Rotten Flesh | Mob-farm storage. Compostable. |
 | <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/carrot_crate.png" width="32"> | **Carrot Crate** | 9 Carrots | Wooden crate (axe). Burns, compostable. |
 | <img src="https://raw.githubusercontent.com/VashaTS/storage-and-back/master/docs/icons/potato_crate.png" width="32"> | **Potato Crate** | 9 Potatoes | Wooden crate (axe). Burns, compostable. |
@@ -96,7 +96,8 @@ Branches: `master` → Minecraft 26.3, `26.2` → Minecraft 26.2. Java 25.
 ```
 ./gradlew build                                      # jar in build/libs, also runs the server game tests
 SDL_VIDEODRIVER=offscreen ./gradlew runClientGameTest # real client: builds scenes and saves screenshots
-python3 tools/gen_data.py      # regenerates blockstates, models, recipes, advancements, loot tables, tags, lang
+python3 tools/gen_data.py      # regenerates blockstates, models, recipes, advancements, loot tables, tags, lang (also rebuilds the 9-pearl model)
+python3 tools/gen_pearl_model.py # just the Ender Pearl Block 3D model and texture
 python3 tools/gen_textures.py  # regenerates the block textures
 python3 tools/gen_icon.py      # regenerates the mod icon and the docs/icons table icons
 ```
