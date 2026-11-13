@@ -74,7 +74,7 @@ The toggles are implemented as a Fabric resource condition (`storageback:config`
 
 ## Installation
 
-* Fabric Loader 0.20.1+ and **Fabric API**.
+* Fabric Loader 0.19.5+ and **Fabric API**.
 * Optional: [Mod Menu](https://modrinth.com/mod/modmenu) and [Cloth Config](https://modrinth.com/mod/cloth-config) for the config screen.
 * The mod adds blocks, so it is needed **on both the server and every client**.
 
