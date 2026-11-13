@@ -2,6 +2,7 @@
 
 ## 1.1.0
 * Added sandstone → 4 sand and red sandstone → 4 red sand back recipes.
+* The Ender Pearl Block is now a cluster of 9 touching pearls (8 at the corners and 1 in the centre) that you can see between.
 
 ## 1.0.0
 * First release for Minecraft 26.3 and 26.2 (Fabric).

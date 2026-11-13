@@ -83,6 +83,69 @@ def main(size=512):
 
 
 
+
+def pearl_icon(size=64):
+    """Isometric 9-pearl cluster (8 corners + centre) for the README table."""
+    import json
+    pearl = tex("ender_pearl")
+    canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    # Isometric projection of a unit cube's centre: X right-down, Z left-down, Y up.
+    c, s = math.cos(math.radians(30)), math.sin(math.radians(30))
+    scale = size * 0.46
+
+    def project(x, y, z):
+        # x,y,z in 0-16 block space, origin at (8,0,8) for a nice sit-on-the-bottom look
+        px = (x - 8) / 16.0
+        py = y / 16.0
+        pz = (z - 8) / 16.0
+        sx = size / 2 + (px - pz) * c * scale
+        sy = size * 0.72 + (px + pz) * s * scale - py * scale
+        return sx, sy
+
+    # Draw far spheres first (small x+z, then low y)
+    spheres = [(4 if (i & 1) == 0 else 12,
+                4 if (i & 2) == 0 else 12,
+                4 if (i & 4) == 0 else 12, 4.0) for i in range(8)]
+    spheres.append((8, 8, 8, 2.93))
+
+    def depth(sph):
+        x, y, z, r = sph
+        return (x + z) - 2 * y  # painter: far/low first
+
+    def blit_sphere(cx, cy, r_px, light):
+        r_px = max(2, int(round(r_px)))
+        d = r_px * 2 + 3
+        tile = Image.new("RGBA", (d, d), (0, 0, 0, 0))
+        px = pearl
+        h, w = px.shape[:2]
+        arr = np.zeros((d, d, 4), np.uint8)
+        for yy in range(d):
+            for xx in range(d):
+                dx = xx + 0.5 - (r_px + 1.5)
+                dy = yy + 0.5 - (r_px + 1.5)
+                rr = math.hypot(dx, dy) / r_px
+                if rr <= 1.0:
+                    # sample pearl texture with a matcap-ish offset + limb darkening
+                    u = np.clip(int((0.5 + 0.5 * dx / r_px) * (w - 1)), 0, w - 1)
+                    v = np.clip(int((0.5 + 0.5 * dy / r_px) * (h - 1)), 0, h - 1)
+                    col = px[v, u].astype(float)
+                    shade = light * (0.55 + 0.45 * (1.0 - rr * rr))
+                    col[:3] *= shade
+                    if rr > 0.88:
+                        col[3] *= (1.0 - rr) / 0.12
+                    arr[yy, xx] = col.astype(np.uint8)
+        tile = Image.fromarray(arr)
+        canvas.alpha_composite(tile, (int(cx - r_px - 1.5), int(cy - r_px - 1.5)))
+
+    for x, y, z, r in sorted(spheres, key=depth):
+        sx, sy = project(x, y, z)
+        # face light: more light when closer to +X / up
+        light = 0.85 + 0.12 * ((12 - z) / 8) + 0.08 * (y / 16)
+        r_px = r / 16.0 * scale * 1.05
+        blit_sphere(sx, sy, r_px, min(1.15, light))
+    return canvas
+
+
 def block_icons():
     """64x64 isometric icons of every block for the README / Modrinth tables (docs/icons)."""
     import json
@@ -91,6 +154,9 @@ def block_icons():
     W, H = int(2 * L * math.cos(math.radians(30))) + 4, int(2 * L) + 6
     for name in sorted(os.listdir("src/main/resources/assets/storageback/models/block")):
         if name.endswith("_horizontal.json"):
+            continue
+        if name == "ender_pearl_block.json":
+            pearl_icon().save("docs/icons/ender_pearl_block.png")
             continue
         model = json.load(open(f"src/main/resources/assets/storageback/models/block/{name}"))["textures"]
         p = lambda k: tex(model[k].split("/")[-1])

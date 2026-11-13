@@ -285,29 +285,13 @@ def feather_block():
 
 # ---------------------------------------------------------------- ender pearls
 def ender_pearl_block():
-    pal = [hx("032620"), hx("063931"), hx("0b4d42"), hx("105e51"), hx("258474"), hx("349988")]
-    t = Tex(hx("021a16"))
-    centers = [(4.0, 4.0), (12.0, 4.0), (8.0, 12.0), (16.0, 12.0)]
-    r = 3.9
-    for y in range(S):
-        for x in range(S):
-            for cx, cy in centers:
-                dx = x + .5 - cx; dy = y + .5 - cy
-                dx = (dx + 8) % 16 - 8; dy = (dy + 8) % 16 - 8
-                d = math.hypot(dx, dy)
-                if d <= r:
-                    light = 0.55 - (dx + dy) / (2.6 * r) - 0.25 * (d / r) ** 2
-                    c = pick(pal, light + 0.35)
-                    if d > r - 0.9:
-                        c = shade(c, 0.75)
-                    # dark swirl in the middle, like the pearl item
-                    if abs(dx + 0.3) < 0.9 and abs(dy + 0.3) < 0.9:
-                        c = hx("063931")
-                    t.set(x, y, c)
-    for cx, cy in centers:
-        t.set(int(cx) - 2, int(cy) - 2, hx("8fd9cc"))
-        t.set(int(cx) - 1, int(cy) - 2, hx("4fb3a2"))
-    t.save("ender_pearl_block")
+    # 3D cluster texture lives in gen_pearl_model.py (used by the 9-sphere block model).
+    import importlib.util, pathlib
+    path = pathlib.Path(__file__).with_name("gen_pearl_model.py")
+    spec = importlib.util.spec_from_file_location("gen_pearl_model", path)
+    pearl = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pearl)
+    pearl.write_texture()
 
 
 # ---------------------------------------------------------------- rotten flesh

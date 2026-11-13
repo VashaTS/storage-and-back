@@ -17,7 +17,7 @@ BLOCKS = [
     ("blaze_rod_bundle", "blaze_rod", "pillar", "pickaxe", "Blaze Rod Bundle", "Wiązka płomiennych różdżek"),
     ("leather_block", "leather", "cube", "hoe", "Leather Block", "Blok skóry"),
     ("feather_block", "feather", "cube", "hoe", "Feather Block", "Blok piór"),
-    ("ender_pearl_block", "ender_pearl", "cube", "pickaxe", "Ender Pearl Block", "Blok pereł Kresu"),
+    ("ender_pearl_block", "ender_pearl", "pearls", "pickaxe", "Ender Pearl Block", "Blok pereł Kresu"),
     ("rotten_flesh_block", "rotten_flesh", "cube", "hoe", "Rotten Flesh Block", "Blok zgniłego mięsa"),
     ("carrot_crate", "carrot", "column", "axe", "Carrot Crate", "Skrzynka marchewek"),
     ("potato_crate", "potato", "column", "axe", "Potato Crate", "Skrzynka ziemniaków"),
@@ -99,6 +99,9 @@ def main():
             write(f"{A}/blockstates/{bid}.json", {"variants": {"": {"model": f"{NS}:block/{bid}"}}})
             write(f"{A}/models/block/{bid}.json", {"parent": "minecraft:block/cube_bottom_top", "textures": {
                 "top": f"{NS}:block/{bid}_top", "side": f"{NS}:block/{bid}_side", "bottom": f"{NS}:block/crate_bottom"}})
+        elif kind == "pearls":
+            write(f"{A}/blockstates/{bid}.json", {"variants": {"": {"model": f"{NS}:block/{bid}"}}})
+            # 9-sphere model + texture: tools/gen_pearl_model.py (must run after this rmtree)
         else:
             write(f"{A}/blockstates/{bid}.json", {"variants": {"": {"model": f"{NS}:block/{bid}"}}})
             write(f"{A}/models/block/{bid}.json", {"parent": "minecraft:block/cube_all", "textures": {"all": f"{NS}:block/{bid}"}})
@@ -179,6 +182,15 @@ def main():
         "config.storageback.reload_note": "Receptury to dane serwera: zmiana działa po /reload lub ponownym wejściu do świata. Na serwerze edytuj tam plik config/storageback.json.",
         "modmenu.descriptionTranslation.storageback": "Bloki do przechowywania krzemienia, trzciny cukrowej, węgla drzewnego, prochu, płomiennych różdżek, skóry, piór, pereł Kresu, zgniłego mięsa i warzyw oraz receptury zamieniające bloki z gry z powrotem w przedmioty.",
     })
+    # Custom 3D model for the Ender Pearl Block (deleted by the models rmtree above).
+    import importlib.util, pathlib
+    pearl_path = pathlib.Path(__file__).with_name("gen_pearl_model.py")
+    spec = importlib.util.spec_from_file_location("gen_pearl_model", pearl_path)
+    pearl = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pearl)
+    pearl.write_model()
+    pearl.write_texture()
+
     write(f"{A}/lang/en_us.json", en)
     write(f"{A}/lang/pl_pl.json", pl)
 

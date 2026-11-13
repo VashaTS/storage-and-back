@@ -65,9 +65,14 @@ public final class ModBlocks {
 			BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).instrument(NoteBlockInstrument.FLUTE)
 					.strength(0.5F).sound(SoundType.WOOL).ignitedByLava(),
 			p -> p);
-	public static final Block ENDER_PEARL_BLOCK = register("ender_pearl_block", Block::new,
+	public static final Block ENDER_PEARL_BLOCK = register("ender_pearl_block", EnderPearlBlock::new,
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_CYAN).instrument(NoteBlockInstrument.CHIME)
-					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST),
+					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST)
+					.noOcclusion().forceSolidOff()
+					.isValidSpawn((state, getter, pos, type) -> false)
+					.isRedstoneConductor((state, getter, pos) -> false)
+					.isSuffocating((state, getter, pos) -> false)
+					.isViewBlocking((state, getter, pos, box) -> false),
 			p -> p);
 	public static final Block ROTTEN_FLESH_BLOCK = register("rotten_flesh_block", Block::new,
 			BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_RED).instrument(NoteBlockInstrument.DIDGERIDOO)
