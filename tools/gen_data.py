@@ -40,6 +40,8 @@ BACK = [
     ("prismarine_bricks", "prismarine_shard", 9, None),
     ("dark_prismarine", "prismarine_shard", 8, None),
     ("magma_block", "magma_cream", 4, "balancing_changes"),
+    ("sandstone", "sand", 4, None),
+    ("red_sandstone", "red_sand", 4, None),
 ]
 
 

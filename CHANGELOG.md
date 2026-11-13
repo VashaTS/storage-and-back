@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0
+* Added sandstone → 4 sand and red sandstone → 4 red sand back recipes.
+
 ## 1.0.0
 * First release for Minecraft 26.3 and 26.2 (Fabric).
 * 13 storage blocks: Flint Block, Sugar Cane Bundle, Charcoal Block, Gunpowder Block, Blaze Rod Bundle, Leather Block, Feather Block, Ender Pearl Block, Rotten Flesh Block, Carrot / Potato / Beetroot / Apple Crate.

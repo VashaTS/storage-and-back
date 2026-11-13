@@ -46,6 +46,7 @@ public class StorageBackServerTest {
 			{"bricks", "brick", "4"}, {"nether_bricks", "nether_brick", "4"}, {"dripstone_block", "pointed_dripstone", "4"},
 			{"prismarine", "prismarine_shard", "4"}, {"prismarine_bricks", "prismarine_shard", "9"},
 			{"dark_prismarine", "prismarine_shard", "8"}, {"magma_block", "magma_cream", "4"},
+			{"sandstone", "sand", "4"}, {"red_sandstone", "red_sand", "4"},
 	};
 	static final List<String> BALANCING = List.of("amethyst_shard_from_amethyst_block", "magma_cream_from_magma_block");
 
@@ -85,7 +86,7 @@ public class StorageBackServerTest {
 			helper.assertTrue(server.getAdvancements().get(StorageBack.id("recipes/" + folder + "/" + c.id())) != null,
 					"missing recipe advancement for " + c.id());
 		}
-		helper.assertTrue(cases().size() == 39, "expected 39 recipes, got " + cases().size());
+		helper.assertTrue(cases().size() == 41, "expected 41 recipes, got " + cases().size());
 		StorageBack.LOGGER.info("[test] all {} recipes and their advancements are loaded", cases().size());
 		helper.succeed();
 	}
@@ -138,7 +139,7 @@ public class StorageBackServerTest {
 						helper.assertTrue(hasRecipe(server, c.id()), c.id() + " must stay");
 					}
 				}
-				StorageBack.LOGGER.info("[test] balancing changes off: amethyst + magma cream recipes removed, other 37 kept");
+				StorageBack.LOGGER.info("[test] balancing changes off: amethyst + magma cream recipes removed, other 39 kept");
 				config.balancingChanges = true;
 				on[0] = server.reloadResources(server.getPackRepository().getSelectedIds());
 				helper.fail("reloading again");
