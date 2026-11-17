@@ -10,10 +10,12 @@ A small Fabric mod for Minecraft **26.3** and **26.2** that fills two gaps in va
 Every recipe was checked against the vanilla recipe list of both versions: none of them clash with an existing recipe, and nothing can be duplicated.
 English and Polish translations.
 
+A **Storage & Back Guide** is crafted shapeless from 1 Book and 1 Flint Block. Right-click it to open a read-only book that describes every storage block and its recipe, the back recipes, and the config toggles (English and Polish). It appears in the **Storage & Back** creative tab.
+
 ## Storage blocks
 
 Each block is crafted from 9 items in a full 3×3 grid, and crafts back into the same 9 items.
-All of them are unlocked in the recipe book as soon as you pick up the item, appear in their own **Storage & Back** creative tab and in **Building Blocks**,
+All of them are unlocked in the recipe book as soon as you pick up the item, appear in their own **Storage & Back** creative tab (with the guide book) and in **Building Blocks**,
 and are tagged `c:storage_blocks/<item>` for other mods.
 
 | | Block | Made from | Notes |
@@ -102,7 +104,7 @@ python3 tools/gen_textures.py  # regenerates the block textures
 python3 tools/gen_icon.py      # regenerates the mod icon and the docs/icons table icons
 ```
 
-The server game tests check that all 41 recipes and their recipe-book advancements load, that every recipe grid matches
+The server game tests check that all 42 recipes and their recipe-book advancements load, that every recipe grid matches
 **only** its own recipe among all crafting recipes of the game, that turning *Balancing changes* off and reloading removes exactly
 the two recipes, and the block properties (fuel, flammability, composting, falling, light).
 

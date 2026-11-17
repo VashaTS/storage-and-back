@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generates blockstates, models, item definitions, loot tables, recipes, recipe advancements, tags and lang files.
-Run from the repository root: python3 tools/gen_data.py  (textures: tools/gen_textures.py)"""
+Run from the repository root: python3 tools/gen_data.py  (textures: tools/gen_textures.py).
+The guide book texture is assets/storageback/textures/item/guide_book.png (not regenerated here)."""
 import json, os, shutil
 
 NS = "storageback"
@@ -142,6 +143,19 @@ def main():
         })
         write(f"{D}/advancement/recipes/misc/{rid}.json", advancement(f"{NS}:{rid}", f"minecraft:{block}", conds))
 
+    # Guide book: shapeless Book + Flint Block. Lang keys are merged below.
+    write(f"{A}/models/item/guide_book.json", {
+        "parent": "minecraft:item/generated",
+        "textures": {"layer0": f"{NS}:item/guide_book"},
+    })
+    write(f"{A}/items/guide_book.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/guide_book"}})
+    write(f"{D}/recipe/guide_book.json", {
+        "type": "minecraft:crafting_shapeless", "category": "misc",
+        "ingredients": ["minecraft:book", f"{NS}:flint_block"],
+        "result": {"id": f"{NS}:guide_book"},
+    })
+    write(f"{D}/advancement/recipes/misc/guide_book.json", advancement(f"{NS}:guide_book", f"{NS}:flint_block"))
+
     # tags
     mc = f"{RES}/data/minecraft/tags/block"
     for tool, ids in tools.items():
@@ -182,6 +196,63 @@ def main():
         "config.storageback.reload_note": "Receptury to dane serwera: zmiana działa po /reload lub ponownym wejściu do świata. Na serwerze edytuj tam plik config/storageback.json.",
         "modmenu.descriptionTranslation.storageback": "Bloki do przechowywania krzemienia, trzciny cukrowej, węgla drzewnego, prochu, płomiennych różdżek, skóry, piór, pereł Kresu, zgniłego mięsa i warzyw oraz receptury zamieniające bloki z gry z powrotem w przedmioty.",
     })
+    en.update({
+        "item.storageback.guide_book": "Storage & Back Guide",
+        "item.storageback.guide_book.desc": "A guide to the new blocks and recipes",
+        "book.storageback.title_heading": "Storage & Back",
+        "book.storageback.heading.back": "Back recipes",
+        "book.storageback.heading.config": "Config",
+        "book.storageback.page.title": "A guide to the new storage blocks, how to craft them, the back (uncrafting) recipes, and the config toggles.\n\nCrafted from 1 Book and 1 Flint Block, shapeless.",
+        "book.storageback.page.flint_block": "Crafted from 9 Flint in a 3×3 grid.\nCrafts back into 9 Flint.\n\nA stone-like block.\nNeeds a pickaxe to mine.",
+        "book.storageback.page.sugar_cane_bundle": "Crafted from 9 Sugar Cane in a 3×3 grid.\nCrafts back into 9 Sugar Cane.\n\nRotates like a log.\nBurns. Compostable.",
+        "book.storageback.page.charcoal_block": "Crafted from 9 Charcoal in a 3×3 grid.\nCrafts back into 9 Charcoal.\n\nFurnace fuel: smelts 80 items, the same as a Block of Coal.\nBurns.",
+        "book.storageback.page.gunpowder_block": "Crafted from 9 Gunpowder in a 3×3 grid.\nCrafts back into 9 Gunpowder.\n\nFalls like sand.\nDoes not explode.",
+        "book.storageback.page.blaze_rod_bundle": "Crafted from 9 Blaze Rods in a 3×3 grid.\nCrafts back into 9 Blaze Rods.\n\nRotates like a log.\nGives off a little light (level 5).\nFurnace fuel: smelts 108 items.",
+        "book.storageback.page.leather_block": "Crafted from 9 Leather in a 3×3 grid.\nCrafts back into 9 Leather.\n\nA soft, wool-like block with stitching.\nBurns.",
+        "book.storageback.page.feather_block": "Crafted from 9 Feathers in a 3×3 grid.\nCrafts back into 9 Feathers.\n\nLanding on it deals only 20% fall damage, like a Hay Bale.\nBurns.",
+        "book.storageback.page.ender_pearl_block": "Crafted from 9 Ender Pearls in a 3×3 grid; crafts back into 9.\n\nA cluster of 9 touching pearls (8 at the corners, 1 in the centre) that you can see between.\nThey only stack to 16; this stores 9 per slot.",
+        "book.storageback.page.rotten_flesh_block": "Crafted from 9 Rotten Flesh in a 3×3 grid.\nCrafts back into 9 Rotten Flesh.\n\nHandy storage for mob farms.\nCompostable.",
+        "book.storageback.page.carrot_crate": "Crafted from 9 Carrots in a 3×3 grid.\nCrafts back into 9 Carrots.\n\nA wooden crate. Mine it with an axe.\nBurns. Compostable.",
+        "book.storageback.page.potato_crate": "Crafted from 9 Potatoes in a 3×3 grid.\nCrafts back into 9 Potatoes.\n\nA wooden crate. Mine it with an axe.\nBurns. Compostable.",
+        "book.storageback.page.beetroot_crate": "Crafted from 9 Beetroots in a 3×3 grid.\nCrafts back into 9 Beetroots.\n\nA wooden crate. Mine it with an axe.\nBurns. Compostable.",
+        "book.storageback.page.apple_crate": "Crafted from 9 Apples in a 3×3 grid.\nCrafts back into 9 Apples.\n\nA wooden crate. Mine it with an axe.\nBurns. Compostable.",
+        "book.storageback.page.back_intro": "One block, crafted shapeless, gives back the items it is made from.\n\nRecipes marked * can be turned off in the config.\nDark Prismarine loses the black dye.",
+        "book.storageback.page.back_1": "(1/5)\nBlock of Quartz →\n4 Nether Quartz\nBlock of Amethyst →\n4 Amethyst Shards *\nClay →\n4 Clay Balls",
+        "book.storageback.page.back_2": "(2/5)\nGlowstone →\n4 Glowstone Dust\nSnow Block →\n4 Snowballs\nHoneycomb Block →\n4 Honeycomb",
+        "book.storageback.page.back_3": "(3/5)\nBricks →\n4 Bricks\nNether Bricks →\n4 Nether Bricks\nDripstone Block →\n4 Pointed Dripstone",
+        "book.storageback.page.config": "Balancing changes (on):\noff = no amethyst or magma recipes.\nBack recipes (on):\noff = no back recipes.\nStorage blocks stay.\n\nEdit storageback.json in config, or Mod Menu, then /reload.",
+        "book.storageback.page.back_4": "(4/5)\nPrismarine →\n4 Prismarine Shards\nPrismarine Bricks →\n9 Prismarine Shards\nDark Prismarine →\n8 Prismarine Shards",
+        "book.storageback.page.back_5": "(5/5)\nMagma Block →\n4 Magma Cream *\nSandstone →\n4 Sand\nRed Sandstone →\n4 Red Sand",
+    })
+    pl.update({
+        "item.storageback.guide_book": "Przewodnik Storage & Back",
+        "item.storageback.guide_book.desc": "Przewodnik po nowych blokach i recepturach",
+        "book.storageback.title_heading": "Storage & Back",
+        "book.storageback.heading.back": "Receptury odwrotne",
+        "book.storageback.heading.config": "Ustawienia",
+        "book.storageback.page.title": "Przewodnik po nowych blokach magazynujących, ich wytwarzaniu, recepturach odwrotnych i ustawieniach.\n\nWytwarzanie: 1 Książka i 1 Blok krzemienia, bez układu w siatce.",
+        "book.storageback.page.flint_block": "Wytwarzanie: 9 krzemieni w siatce 3×3.\nZ bloku z powrotem: 9 krzemieni.\n\nTwardy, kamienny blok.\nDo wykopania potrzebny jest kilof.",
+        "book.storageback.page.sugar_cane_bundle": "Wytwarzanie: 9 trzcin cukrowych w siatce 3×3.\nZ powrotem: 9 trzcin cukrowych.\n\nObraca się jak kłoda.\nPali się. Nadaje się do kompostownika.",
+        "book.storageback.page.charcoal_block": "Wytwarzanie: 9 węgla drzewnego w siatce 3×3.\nZ powrotem: 9 węgla drzewnego.\n\nPaliwo do pieca: wystarcza na 80 przedmiotów, tak jak Blok węgla.\nPali się.",
+        "book.storageback.page.gunpowder_block": "Wytwarzanie: 9 prochu w siatce 3×3.\nZ powrotem: 9 prochu.\n\nSpada jak piasek.\nNie wybucha.",
+        "book.storageback.page.blaze_rod_bundle": "Wytwarzanie: 9 płomiennych różdżek w siatce 3×3; z powrotem też 9.\n\nUstawia się jak kłoda. Słabo świeci (poziom 5).\nPaliwo: wystarcza na 108 przedmiotów.",
+        "book.storageback.page.leather_block": "Wytwarzanie: 9 skór w siatce 3×3.\nZ powrotem: 9 skór.\n\nMiękki blok, jak wełna, ze szwem.\nPali się.",
+        "book.storageback.page.feather_block": "Wytwarzanie: 9 piór w siatce 3×3.\nZ powrotem: 9 piór.\n\nLądowanie na nim zadaje tylko 20% obrażeń od upadku, jak snop siana.\nPali się.",
+        "book.storageback.page.ender_pearl_block": "Wytwarzanie: 9 enderpereł w siatce 3×3; z powrotem też 9.\n\nTo 9 stykających się pereł (8 w rogach, 1 w środku). Widać między nimi.\nEnderperła układa się tylko do 16 sztuk; blok mieści 9.",
+        "book.storageback.page.rotten_flesh_block": "Wytwarzanie: 9 zgniłego mięsa w siatce 3×3.\nZ powrotem: 9 zgniłego mięsa.\n\nPrzydatny do łupu z farm potworów.\nNadaje się do kompostownika.",
+        "book.storageback.page.carrot_crate": "Wytwarzanie: 9 marchewek w siatce 3×3.\nZ powrotem: 9 marchewek.\n\nDrewniana skrzynka. Wykop ją siekierą.\nPali się. Nadaje się do kompostownika.",
+        "book.storageback.page.potato_crate": "Wytwarzanie: 9 ziemniaków w siatce 3×3.\nZ powrotem: 9 ziemniaków.\n\nDrewniana skrzynka. Wykop ją siekierą.\nPali się. Nadaje się do kompostownika.",
+        "book.storageback.page.beetroot_crate": "Wytwarzanie: 9 buraków w siatce 3×3.\nZ powrotem: 9 buraków.\n\nDrewniana skrzynka. Wykop ją siekierą.\nPali się. Nadaje się do kompostownika.",
+        "book.storageback.page.apple_crate": "Wytwarzanie: 9 jabłek w siatce 3×3.\nZ powrotem: 9 jabłek.\n\nDrewniana skrzynka. Wykop ją siekierą.\nPali się. Nadaje się do kompostownika.",
+        "book.storageback.page.back_intro": "Jeden blok, bez układu w siatce, oddaje przedmioty, z których powstał.\n\nReceptury oznaczone * można wyłączyć w ustawieniach.\nCzarny barwnik z ciemnego pryzmarynu przepada.",
+        "book.storageback.page.back_1": "(1/5)\nBlok kwarcu →\n4 netherowe kwarce\nBlok ametystu →\n4 odłamki ametystu *\nGlina →\n4 kulki gliny",
+        "book.storageback.page.back_2": "(2/5)\nJasnogłaz →\n4 jasnopyły\nBlok śniegu →\n4 śnieżki\nBlok plastra miodu →\n4 plastry miodu",
+        "book.storageback.page.back_3": "(3/5)\nCegły →\n4 cegły\nNetherowe cegły →\n4 netherowe cegły\nBlok nacieku →\n4 spiczaste nacieki",
+        "book.storageback.page.config": "Zmiany balansu (wł.):\nbez nich znikają receptury ametystu i magmy.\nReceptury odwrotne (wł.):\nusuwa je wszystkie. Bloki zostają.\nZmiana: Mod Menu albo plik w folderze config, potem /reload.",
+        "book.storageback.page.back_4": "(4/5)\nPryzmaryn →\n4 odłamki pryzmarynu\nPryzmarynowe cegły →\n9 odłamków pryzmarynu\nCiemny pryzmaryn →\n8 odłamków pryzmarynu",
+        "book.storageback.page.back_5": "(5/5)\nBlok magmy →\n4 magmowe kremy *\nPiaskowiec →\n4 piasek\nCzerwony piaskowiec →\n4 czerwony piasek",
+    })
+
     # Custom 3D model for the Ender Pearl Block (deleted by the models rmtree above).
     import importlib.util, pathlib
     pearl_path = pathlib.Path(__file__).with_name("gen_pearl_model.py")

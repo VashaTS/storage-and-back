@@ -19,6 +19,9 @@
 		"main": [
 			"net.vsh33.storageback.StorageBack"
 		],
+		"client": [
+			"net.vsh33.storageback.client.StorageBackClient"
+		],
 		"modmenu": [
 			"net.vsh33.storageback.client.ModMenuIntegration"
 		]
