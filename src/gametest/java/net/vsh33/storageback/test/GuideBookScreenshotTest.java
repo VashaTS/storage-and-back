@@ -8,26 +8,24 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.vsh33.storageback.block.ModBlocks;
-import net.vsh33.storageback.item.GuideBookPages;
-import net.vsh33.storageback.item.ModItems;
+import net.vsh33.storageback.client.GuideBookScreen;
 
 /**
- * Screenshots of the guide book in the inventory, in the 2×2 crafting grid, and open on several pages in EN and PL.
- * Written to /workspace/snb-book/. Also fails if any page overflows the vanilla book text box.
+ * Screenshots of the illustrated guide book: index, category lists and several
+ * entries in English and Polish, written to /workspace/snb-book2/. Also fails
+ * if any page text overflows its column.
  */
 public class GuideBookScreenshotTest implements FabricClientGameTest {
-	private static final Path OUT = Path.of("/workspace/snb-book");
-	private static final int BOOK_TEXT_WIDTH = 114;
-	private static final int BOOK_MAX_LINES = 128 / 9;
+	private static final Path OUT = Path.of("/workspace/snb-book2");
 
 	private static void shot(ClientGameTestContext context, String name) {
+		context.runOnClient(mc -> mc.gui.toastManager().clear());
+		context.waitTicks(2);
 		context.takeScreenshot(TestScreenshotOptions.of(name)
 				.disableCounterPrefix()
 				.withSize(1280, 720)
@@ -53,7 +51,7 @@ public class GuideBookScreenshotTest implements FabricClientGameTest {
 			context.getInput().pressKey(options -> options.keyToggleGui);
 			context.waitTicks(20);
 
-			assertPagesFit(context, "en_us");
+			assertTextFits(context, "en_us");
 
 			server.runCommand("item replace entity @p hotbar.0 with storageback:guide_book");
 			server.runCommand("item replace entity @p hotbar.1 with minecraft:book");
@@ -64,7 +62,6 @@ public class GuideBookScreenshotTest implements FabricClientGameTest {
 			openInventory(context);
 			shot(context, "inventory-en");
 
-			// 2×2 crafting grid: Book + Flint Block → guide book
 			server.runOnServer(s -> {
 				ServerPlayer player = s.getPlayerList().getPlayers().getFirst();
 				player.inventoryMenu.getSlot(1).set(new ItemStack(Items.BOOK));
@@ -76,11 +73,10 @@ public class GuideBookScreenshotTest implements FabricClientGameTest {
 
 			context.runOnClient(mc -> mc.gui.setScreen(null));
 			context.waitTicks(5);
-			openBook(context);
-			shotPages(context, "en", new int[]{0, 1, 5, 8, 14, 15, 19, 20});
+			captureBook(context, "en");
 
 			setLanguage(context, "pl_pl");
-			assertPagesFit(context, "pl_pl");
+			assertTextFits(context, "pl_pl");
 
 			clearCrafting(server);
 			openInventory(context);
@@ -97,28 +93,67 @@ public class GuideBookScreenshotTest implements FabricClientGameTest {
 
 			context.runOnClient(mc -> mc.gui.setScreen(null));
 			context.waitTicks(5);
-			openBook(context);
-			shotPages(context, "pl", new int[]{0, 1, 5, 8, 14, 15, 19, 20});
+			captureBook(context, "pl");
 		}
+	}
+
+	private static void captureBook(ClientGameTestContext context, String lang) {
+		openBook(context);
+		shot(context, "index-" + lang);
+
+		context.runOnClient(mc -> {
+			if (mc.gui.screen() instanceof GuideBookScreen screen) {
+				screen.openStorageList();
+			}
+		});
+		context.waitTicks(5);
+		shot(context, "storage-" + lang);
+
+		openEntry(context, "flint_block");
+		shot(context, "flint-" + lang);
+
+		openEntry(context, "ender_pearl_block");
+		shot(context, "ender-" + lang);
+
+		context.runOnClient(mc -> {
+			if (mc.gui.screen() instanceof GuideBookScreen screen) {
+				screen.openBackList();
+			}
+		});
+		context.waitTicks(5);
+		shot(context, "back-list-" + lang);
+
+		openEntry(context, "quartz");
+		shot(context, "quartz-" + lang);
+
+		openEntry(context, "dark_prismarine");
+		shot(context, "dark-prismarine-" + lang);
+
+		openEntry(context, "magma");
+		shot(context, "magma-" + lang);
+
+		context.runOnClient(mc -> {
+			if (mc.gui.screen() instanceof GuideBookScreen screen) {
+				screen.openConfig();
+			}
+		});
+		context.waitTicks(5);
+		shot(context, "config-" + lang);
 	}
 
 	private static void openBook(ClientGameTestContext context) {
-		context.runOnClient(mc -> mc.gui.setScreen(new BookViewScreen(new BookViewScreen.BookAccess(GuideBookPages.pages()))));
-		context.waitForScreen(BookViewScreen.class);
+		context.runOnClient(mc -> mc.gui.setScreen(new GuideBookScreen()));
+		context.waitForScreen(GuideBookScreen.class);
 		context.waitTicks(5);
 	}
 
-	private static void shotPages(ClientGameTestContext context, String lang, int[] pages) {
-		for (int page : pages) {
-			final int target = page;
-			context.runOnClient(mc -> {
-				if (mc.gui.screen() instanceof BookViewScreen screen) {
-					screen.setPage(target);
-				}
-			});
-			context.waitTicks(5);
-			shot(context, "book-" + lang + "-p" + page);
-		}
+	private static void openEntry(ClientGameTestContext context, String id) {
+		context.runOnClient(mc -> {
+			if (mc.gui.screen() instanceof GuideBookScreen screen) {
+				screen.openEntry(id);
+			}
+		});
+		context.waitTicks(5);
 	}
 
 	private static void setLanguage(ClientGameTestContext context, String code) {
@@ -129,7 +164,6 @@ public class GuideBookScreenshotTest implements FabricClientGameTest {
 		CompletableFuture<Void> reload = context.computeOnClient(Minecraft::reloadResourcePacks);
 		context.waitFor(mc -> reload.isDone(), 30 * 20);
 		context.runOnClient(mc -> mc.gui.setScreen(null));
-		// The reload splash (Mojang logo) must finish before we open any screen.
 		context.waitFor(mc -> mc.gui.overlay() == null, 30 * 20);
 		context.waitTicks(20);
 	}
@@ -150,22 +184,7 @@ public class GuideBookScreenshotTest implements FabricClientGameTest {
 		context.waitTicks(10);
 	}
 
-	private static void assertPagesFit(ClientGameTestContext context, String lang) {
-		context.runOnClient(mc -> {
-			StringBuilder overflows = new StringBuilder();
-			int i = 0;
-			for (Component page : GuideBookPages.pages()) {
-				int lines = mc.font.split(page, BOOK_TEXT_WIDTH).size();
-				System.out.println("[guide-book] " + lang + " page " + i + " lines=" + lines + "/" + BOOK_MAX_LINES);
-				if (lines > BOOK_MAX_LINES) {
-					overflows.append(" page ").append(i).append(" has ").append(lines).append(" lines: ")
-							.append(page.getString().replace("\n", " / ")).append("\n");
-				}
-				i++;
-			}
-			if (!overflows.isEmpty()) {
-				throw new AssertionError("Guide book overflows in " + lang + ":\n" + overflows);
-			}
-		});
+	private static void assertTextFits(ClientGameTestContext context, String lang) {
+		context.runOnClient(mc -> GuideBookScreen.assertContentsFit(mc.font, lang));
 	}
 }

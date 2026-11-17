@@ -10,7 +10,7 @@ A small Fabric mod for Minecraft **26.3** and **26.2** that fills two gaps in va
 Every recipe was checked against the vanilla recipe list of both versions: none of them clash with an existing recipe, and nothing can be duplicated.
 English and Polish translations.
 
-A **Storage & Back Guide** is crafted shapeless from 1 Book and 1 Flint Block. Right-click it to open a read-only book that describes every storage block and its recipe, the back recipes, and the config toggles (English and Polish). It appears in the **Storage & Back** creative tab.
+A **Storage & Back Guide** is crafted shapeless from 1 Book and 1 Flint Block. Right-click it to open a read-only illustrated guidebook: a two-page spread with clickable categories and entries, item icons, and visible crafting recipes. It covers every storage block, the back recipes, and the config toggles (English and Polish), and appears in the **Storage & Back** creative tab.
 
 ## Storage blocks
 

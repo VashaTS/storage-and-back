@@ -13,7 +13,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 
-/** A read-only guide that opens a vanilla-style book screen on right-click. */
+/** A read-only guide that opens the illustrated guidebook screen on right-click. */
 public class GuideBookItem extends Item {
 	public GuideBookItem(final Item.Properties properties) {
 		super(properties);
