@@ -193,7 +193,7 @@ public class GuideBookScreen extends Screen {
 		int lx = this.leftPos + LEFT;
 		int ly = this.topPos + TOP;
 		int y = ly + this.drawTitle(graphics, lx, ly, PAGE_W, Component.translatable("book.storageback.title_heading"));
-		y = graphics.textWithWordWrap(this.font, Component.translatable("book.storageback.intro"), lx, y, PAGE_W, INK, false);
+		y = this.drawWrapped(graphics, Component.translatable("book.storageback.intro"), lx, y, PAGE_W, INK);
 		y += 8;
 		this.drawRecipe(graphics, lx, y, this.contents.guideBookRecipe(), Component.translatable("book.storageback.heading.crafting"), mouseX, mouseY);
 
@@ -210,7 +210,7 @@ public class GuideBookScreen extends Screen {
 		int ly = this.topPos + TOP;
 		ly += this.drawTitle(graphics, lx, ly, PAGE_W, title);
 		if (intro != null) {
-			ly = graphics.textWithWordWrap(this.font, intro, lx, ly, PAGE_W, INK, false);
+			ly = this.drawWrapped(graphics, intro, lx, ly, PAGE_W, INK);
 			ly += 4;
 		}
 		int bottom = this.topPos + PAGE_BOTTOM;
@@ -267,18 +267,18 @@ public class GuideBookScreen extends Screen {
 		int lx = this.leftPos + LEFT;
 		int ly = this.topPos + TOP;
 		ly += this.drawTitle(graphics, lx, ly, PAGE_W, Component.translatable("book.storageback.category.config"));
-		ly = graphics.textWithWordWrap(this.font, Component.translatable("book.storageback.page.config.balancing"), lx, ly, PAGE_W, INK, false);
+		ly = this.drawWrapped(graphics, Component.translatable("book.storageback.page.config.balancing"), lx, ly, PAGE_W, INK);
 		ly += 4;
 		this.drawStatus(graphics, lx, ly, StorageBackConfig.get().balancingChanges);
 
 		int rx = this.leftPos + RIGHT;
 		int ry = this.topPos + TOP;
 		ry += this.drawTitle(graphics, rx, ry, PAGE_W, Component.translatable("book.storageback.category.back"));
-		ry = graphics.textWithWordWrap(this.font, Component.translatable("book.storageback.page.config.back"), rx, ry, PAGE_W, INK, false);
+		ry = this.drawWrapped(graphics, Component.translatable("book.storageback.page.config.back"), rx, ry, PAGE_W, INK);
 		ry += 4;
 		ry = this.drawStatus(graphics, rx, ry, StorageBackConfig.get().backRecipes);
 		ry += 8;
-		graphics.textWithWordWrap(this.font, Component.translatable("book.storageback.page.config.how"), rx, ry, PAGE_W, INK, false);
+		this.drawWrapped(graphics, Component.translatable("book.storageback.page.config.how"), rx, ry, PAGE_W, INK);
 	}
 
 	private int drawStatus(GuiGraphicsExtractor graphics, int x, int y, boolean on) {
@@ -304,7 +304,7 @@ public class GuideBookScreen extends Screen {
 			titleY += 9;
 		}
 		int y = ly + 36;
-		y = graphics.textWithWordWrap(this.font, entry.body(), lx, y, PAGE_W, INK, false);
+		y = this.drawWrapped(graphics, entry.body(), lx, y, PAGE_W, INK);
 		if (!entry.links().isEmpty()) {
 			y += 8;
 			graphics.text(this.font, Component.translatable("book.storageback.see_also"), lx, y, INK_SOFT, false);
@@ -409,6 +409,15 @@ public class GuideBookScreen extends Screen {
 			this.goTo(target, true);
 		}, ItemStack.EMPTY, label));
 		return 11;
+	}
+
+
+	private int drawWrapped(GuiGraphicsExtractor graphics, Component text, int x, int y, int width, int color) {
+		for (FormattedCharSequence line : this.font.split(text, width)) {
+			graphics.text(this.font, line, x, y, color, false);
+			y += 9;
+		}
+		return y;
 	}
 
 	private int drawTitle(GuiGraphicsExtractor graphics, int x, int y, int width, Component title) {
