@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:book",
+    "storageback:flint_block"
+  ],
+  "result": {
+    "id": "storageback:guide_book"
+  }
+}

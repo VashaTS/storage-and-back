@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.resources.Identifier;
 import net.vsh33.storageback.block.ModBlocks;
+import net.vsh33.storageback.item.ModItems;
 import net.vsh33.storageback.config.ConfigCondition;
 import net.vsh33.storageback.config.StorageBackConfig;
 import org.slf4j.Logger;
@@ -26,5 +27,6 @@ public class StorageBack implements ModInitializer {
 		StorageBackConfig.load();
 		ResourceConditions.register(ConfigCondition.TYPE);
 		ModBlocks.initialize();
+		ModItems.initialize();
 	}
 }

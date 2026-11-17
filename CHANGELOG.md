@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.0
+* Added the Storage & Back Guide, crafted shapeless from 1 Book and 1 Flint Block. Right-click opens a read-only book with a page for every storage block, the back recipes, and the config toggles, in English and Polish.
+
 ## 1.1.0
 * Added sandstone → 4 sand and red sandstone → 4 red sand back recipes.
 * The Ender Pearl Block is now a cluster of 9 touching pearls (8 at the corners and 1 in the centre) that you can see between.

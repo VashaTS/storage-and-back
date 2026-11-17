@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.vsh33.storageback.StorageBack;
 import net.vsh33.storageback.block.EnderPearlBlock;
 import net.vsh33.storageback.block.ModBlocks;
+import net.vsh33.storageback.item.ModItems;
 import net.vsh33.storageback.config.StorageBackConfig;
 
 /** Server game tests (./gradlew runGameTest, also run by ./gradlew build). */
@@ -75,6 +76,7 @@ public class StorageBackServerTest {
 		for (String[] b : BACK) {
 			cases.add(new Case(b[1] + "_from_" + b[0], CraftingInput.of(1, 1, List.of(new ItemStack(item(b[0])))), item(b[1]), Integer.parseInt(b[2])));
 		}
+		cases.add(new Case("guide_book", CraftingInput.of(1, 2, List.of(new ItemStack(Items.BOOK), new ItemStack(ModBlocks.FLINT_BLOCK))), ModItems.GUIDE_BOOK, 1));
 		return cases;
 	}
 
@@ -83,11 +85,11 @@ public class StorageBackServerTest {
 		MinecraftServer server = helper.getLevel().getServer();
 		for (Case c : cases()) {
 			helper.assertTrue(hasRecipe(server, c.id()), "missing recipe storageback:" + c.id());
-			String folder = c.id().contains("_from_") ? "misc" : "building_blocks";
+			String folder = (c.id().contains("_from_") || c.id().equals("guide_book")) ? "misc" : "building_blocks";
 			helper.assertTrue(server.getAdvancements().get(StorageBack.id("recipes/" + folder + "/" + c.id())) != null,
 					"missing recipe advancement for " + c.id());
 		}
-		helper.assertTrue(cases().size() == 41, "expected 41 recipes, got " + cases().size());
+		helper.assertTrue(cases().size() == 42, "expected 42 recipes, got " + cases().size());
 		StorageBack.LOGGER.info("[test] all {} recipes and their advancements are loaded", cases().size());
 		helper.succeed();
 	}
@@ -140,7 +142,7 @@ public class StorageBackServerTest {
 						helper.assertTrue(hasRecipe(server, c.id()), c.id() + " must stay");
 					}
 				}
-				StorageBack.LOGGER.info("[test] balancing changes off: amethyst + magma cream recipes removed, other 39 kept");
+				StorageBack.LOGGER.info("[test] balancing changes off: amethyst + magma cream recipes removed, other 40 kept");
 				config.balancingChanges = true;
 				on[0] = server.reloadResources(server.getPackRepository().getSelectedIds());
 				helper.fail("reloading again");
