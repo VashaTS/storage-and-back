@@ -273,7 +273,7 @@ def main():
         "book.storageback.nav.back": "Wstecz",
         "book.storageback.status.on": "Obecnie włączone.",
         "book.storageback.status.off": "Obecnie wyłączone.",
-        "book.storageback.page.flint_block": "Twardy, kamienny blok. Do wykopania potrzebny jest kilof.\n\nRazem z książką służy do wytworzenia tego przewodnika.",
+        "book.storageback.page.flint_block": "Kamienny blok. Do wykopania potrzebny jest kilof. Z książką służy do wytworzenia tego przewodnika.",
         "book.storageback.page.sugar_cane_bundle": "Obraca się jak kłoda.\nPali się. Nadaje się do kompostownika.",
         "book.storageback.page.charcoal_block": "Paliwo do pieca: wystarcza na 80 przedmiotów, tak jak Blok węgla.\nPali się.",
         "book.storageback.page.gunpowder_block": "Spada jak piasek.\nNie wybucha.",

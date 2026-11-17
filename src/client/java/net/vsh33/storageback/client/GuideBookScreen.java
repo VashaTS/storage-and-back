@@ -36,9 +36,9 @@ public class GuideBookScreen extends Screen {
 	public static final int BOOK_W = 256;
 	public static final int BOOK_H = 192;
 	public static final int TEX = 256;
-	public static final int PAGE_W = 110;
-	public static final int LEFT = 14;
-	public static final int RIGHT = 136;
+	public static final int PAGE_W = 104;
+	public static final int LEFT = 16;
+	public static final int RIGHT = 138;
 	public static final int TOP = 14;
 	public static final int PAGE_BOTTOM = 164;
 	/** Entry body text under the icon/title; leaves room for a see-also link. */
@@ -69,6 +69,10 @@ public class GuideBookScreen extends Screen {
 	private static final int DISABLED = 0xFF8B2A22;
 	private static final int ENABLED = 0xFF2E6B3A;
 	private static final int HOVER_FILL = 0x332A1C10;
+	/** 2× inventory slot; the 16×16 item sits in the inner 16×16, centred. */
+	public static final int LARGE_ICON = SLOT * 2;
+	public static final int TITLE_W = PAGE_W - LARGE_ICON - 4;
+	public static final int LIST_TEXT_W = PAGE_W - 18;
 
 	private final GuideBookContents contents;
 	private final List<Location> history = new ArrayList<>();
@@ -269,7 +273,7 @@ public class GuideBookScreen extends Screen {
 		ly += this.drawTitle(graphics, lx, ly, PAGE_W, Component.translatable("book.storageback.category.config"));
 		ly = this.drawWrapped(graphics, Component.translatable("book.storageback.page.config.balancing"), lx, ly, PAGE_W, INK);
 		ly += 4;
-		this.drawStatus(graphics, lx, ly, StorageBackConfig.get().balancingChanges);
+		ly = this.drawStatus(graphics, lx, ly, StorageBackConfig.get().balancingChanges);
 
 		int rx = this.leftPos + RIGHT;
 		int ry = this.topPos + TOP;
@@ -283,8 +287,7 @@ public class GuideBookScreen extends Screen {
 
 	private int drawStatus(GuiGraphicsExtractor graphics, int x, int y, boolean on) {
 		Component text = Component.translatable(on ? "book.storageback.status.on" : "book.storageback.status.off");
-		graphics.text(this.font, text, x, y, on ? ENABLED : DISABLED, false);
-		return y + this.font.lineHeight;
+		return this.drawWrapped(graphics, text, x, y, PAGE_W, on ? ENABLED : DISABLED);
 	}
 
 	private void drawEntry(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
@@ -295,20 +298,18 @@ public class GuideBookScreen extends Screen {
 		int lx = this.leftPos + LEFT;
 		int ly = this.topPos + TOP;
 		this.drawLargeIcon(graphics, lx, ly, entry.icon(), mouseX, mouseY);
-		int titleX = lx + 36;
-		int titleW = PAGE_W - 36;
-		List<FormattedCharSequence> titleLines = this.font.split(entry.title().copy().withStyle(ChatFormatting.BOLD), titleW);
-		int titleY = ly + Math.max(0, (32 - titleLines.size() * 9) / 2);
+		int titleX = lx + LARGE_ICON + 4;
+		List<FormattedCharSequence> titleLines = this.font.split(entry.title().copy().withStyle(ChatFormatting.BOLD), TITLE_W);
+		int titleY = ly + Math.max(0, (LARGE_ICON - titleLines.size() * 9) / 2);
 		for (FormattedCharSequence line : titleLines) {
 			graphics.text(this.font, line, titleX, titleY, INK, false);
 			titleY += 9;
 		}
-		int y = ly + 36;
+		int y = Math.max(ly + LARGE_ICON, titleY) + 4;
 		y = this.drawWrapped(graphics, entry.body(), lx, y, PAGE_W, INK);
 		if (!entry.links().isEmpty()) {
-			y += 8;
-			graphics.text(this.font, Component.translatable("book.storageback.see_also"), lx, y, INK_SOFT, false);
-			y += 11;
+			y += 6;
+			y = this.drawWrapped(graphics, Component.translatable("book.storageback.see_also"), lx, y, PAGE_W, INK_SOFT);
 			for (Link link : entry.links()) {
 				y += this.drawTextLink(graphics, lx, y, PAGE_W, link.label(), link.target(), mouseX, mouseY);
 			}
@@ -332,14 +333,13 @@ public class GuideBookScreen extends Screen {
 	}
 
 	private void drawLargeIcon(GuiGraphicsExtractor graphics, int x, int y, ItemStack stack, int mouseX, int mouseY) {
-		graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, RESULT_U, WIDGET_V, SLOT, SLOT, TEX, TEX);
-		graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 14, y + 14, RESULT_U, WIDGET_V, SLOT, SLOT, TEX, TEX);
 		graphics.pose().pushMatrix();
 		graphics.pose().translate(x, y);
 		graphics.pose().scale(2.0F, 2.0F);
+		graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, 0, 0, RESULT_U, WIDGET_V, SLOT, SLOT, TEX, TEX);
 		graphics.item(stack, 1, 1);
 		graphics.pose().popMatrix();
-		this.hotspots.add(new Hotspot(x, y, 32, 32, null, stack, null));
+		this.hotspots.add(new Hotspot(x, y, LARGE_ICON, LARGE_ICON, null, stack, null));
 	}
 
 	private int drawLinkRow(GuiGraphicsExtractor graphics, int x, int y, int width, ItemStack icon, Component title, Location target, int mouseX, int mouseY, boolean spacious) {
@@ -399,16 +399,23 @@ public class GuideBookScreen extends Screen {
 	}
 
 	private int drawTextLink(GuiGraphicsExtractor graphics, int x, int y, int width, Component label, Location target, int mouseX, int mouseY) {
-		boolean hover = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + 10;
+		Component styled = label.copy().withStyle(Style.EMPTY.withColor(LINK));
+		List<FormattedCharSequence> preview = this.font.split(styled, width);
+		int height = Math.max(this.font.lineHeight, preview.size() * this.font.lineHeight);
+		boolean hover = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 		Component text = hover
 				? label.copy().withStyle(Style.EMPTY.withUnderlined(true).withColor(LINK_HOVER))
-				: label.copy().withStyle(Style.EMPTY.withColor(LINK));
-		graphics.text(this.font, text, x, y, hover ? LINK_HOVER : LINK, false);
-		this.hotspots.add(new Hotspot(x, y, width, 10, () -> {
+				: styled;
+		int yy = y;
+		for (FormattedCharSequence line : this.font.split(text, width)) {
+			graphics.text(this.font, line, x, yy, hover ? LINK_HOVER : LINK, false);
+			yy += this.font.lineHeight;
+		}
+		this.hotspots.add(new Hotspot(x, y, width, height, () -> {
 			this.clickSound();
 			this.goTo(target, true);
 		}, ItemStack.EMPTY, label));
-		return 11;
+		return height + 1;
 	}
 
 
@@ -436,8 +443,7 @@ public class GuideBookScreen extends Screen {
 	}
 
 	private int drawRecipe(GuiGraphicsExtractor graphics, int x, int y, RecipeGrid grid, Component header, int mouseX, int mouseY) {
-		graphics.text(this.font, header.copy().withStyle(ChatFormatting.BOLD), x, y, INK, false);
-		int gridY = y + 12;
+		int gridY = this.drawWrapped(graphics, header.copy().withStyle(ChatFormatting.BOLD), x, y, PAGE_W, INK) + 3;
 		int gridX = x;
 		for (int row = 0; row < 3; row++) {
 			for (int col = 0; col < 3; col++) {
@@ -454,11 +460,15 @@ public class GuideBookScreen extends Screen {
 		this.drawSlot(graphics, resultX, resultY, grid.result(), true, grid.disabled(), mouseX, mouseY);
 		int bottom = gridY + 3 * SLOT;
 		if (grid.disabled()) {
-			graphics.text(this.font, Component.translatable("book.storageback.disabled"), x, bottom + 2, DISABLED, false);
-			bottom += 11;
+			bottom = this.drawWrapped(graphics, Component.translatable("book.storageback.disabled"), x, bottom + 2, PAGE_W, DISABLED);
 		} else if (grid.balancing()) {
-			graphics.text(this.font, Component.literal("* ").append(Component.translatable("book.storageback.balancing")), x, bottom + 2, GOLD, false);
-			bottom += 11;
+			bottom = this.drawWrapped(
+					graphics,
+					Component.literal("* ").append(Component.translatable("book.storageback.balancing")),
+					x,
+					bottom + 2,
+					PAGE_W,
+					GOLD);
 		}
 		return bottom - y;
 	}
@@ -469,12 +479,22 @@ public class GuideBookScreen extends Screen {
 		graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, u, WIDGET_V, SLOT, SLOT, TEX, TEX);
 		if (!stack.isEmpty()) {
 			graphics.item(stack, x + 1, y + 1);
-			graphics.itemDecorations(this.font, stack, x + 1, y + 1);
+			this.drawStackCount(graphics, stack, x, y);
 			this.hotspots.add(new Hotspot(x, y, SLOT, SLOT, null, stack, null));
 		}
 		if (disabled) {
 			graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, DISABLED_U, WIDGET_V, SLOT, SLOT, TEX, TEX);
 		}
+	}
+
+	/** Count sits fully inside the 18×18 slot, not clipped on the gold border. */
+	private void drawStackCount(GuiGraphicsExtractor graphics, ItemStack stack, int slotX, int slotY) {
+		if (stack.getCount() <= 1) {
+			return;
+		}
+		String amount = String.valueOf(stack.getCount());
+		int w = this.font.width(amount);
+		graphics.text(this.font, amount, slotX + SLOT - 3 - w, slotY + SLOT - 2 - this.font.lineHeight, 0xFFFFFFFF, true);
 	}
 
 	private void drawNavIcons(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
@@ -556,35 +576,66 @@ public class GuideBookScreen extends Screen {
 	/**
 	 * Fails the screenshot / content test if any translated body is too long for its page.
 	 */
+	/**
+	 * Fails the screenshot / content test if any translated string is too long for
+	 * its column, including links, footnotes, titles, headings and status lines.
+	 */
 	public static void assertContentsFit(Font font, String lang) {
 		GuideBookContents contents = GuideBookContents.create();
 		StringBuilder errors = new StringBuilder();
-		check(font, lang, errors, "intro", Component.translatable("book.storageback.intro"), MAX_INTRO_LINES);
-		check(font, lang, errors, "back.intro", Component.translatable("book.storageback.page.back.intro"), 3);
-		check(font, lang, errors, "config.balancing", Component.translatable("book.storageback.page.config.balancing"), MAX_CONFIG_LINES);
-		check(font, lang, errors, "config.back", Component.translatable("book.storageback.page.config.back"), MAX_CONFIG_LINES);
-		check(font, lang, errors, "config.how", Component.translatable("book.storageback.page.config.how"), 5);
+		check(font, lang, errors, "intro", Component.translatable("book.storageback.intro"), PAGE_W, MAX_INTRO_LINES);
+		check(font, lang, errors, "back.intro", Component.translatable("book.storageback.page.back.intro"), PAGE_W, 3);
+		check(font, lang, errors, "config.balancing", Component.translatable("book.storageback.page.config.balancing"), PAGE_W, MAX_CONFIG_LINES);
+		check(font, lang, errors, "config.back", Component.translatable("book.storageback.page.config.back"), PAGE_W, MAX_CONFIG_LINES);
+		check(font, lang, errors, "config.how", Component.translatable("book.storageback.page.config.how"), PAGE_W, 5);
+		check(font, lang, errors, "link.guide_recipe", Component.translatable("book.storageback.link.guide_recipe"), PAGE_W, 3);
+		check(font, lang, errors, "see_also", Component.translatable("book.storageback.see_also"), PAGE_W, 2);
+		check(font, lang, errors, "disabled", Component.translatable("book.storageback.disabled"), PAGE_W, 3);
+		check(font, lang, errors, "balancing", Component.literal("* ").append(Component.translatable("book.storageback.balancing")), PAGE_W, 3);
+		check(font, lang, errors, "status.on", Component.translatable("book.storageback.status.on"), PAGE_W, 2);
+		check(font, lang, errors, "status.off", Component.translatable("book.storageback.status.off"), PAGE_W, 2);
+		check(font, lang, errors, "heading.index", Component.translatable("book.storageback.heading.index").copy().withStyle(ChatFormatting.BOLD), PAGE_W, 2);
+		check(font, lang, errors, "heading.crafting", Component.translatable("book.storageback.heading.crafting").copy().withStyle(ChatFormatting.BOLD), PAGE_W, 2);
+		check(font, lang, errors, "heading.uncrafting", Component.translatable("book.storageback.heading.uncrafting").copy().withStyle(ChatFormatting.BOLD), PAGE_W, 2);
+		check(font, lang, errors, "heading.shapeless", Component.translatable("book.storageback.heading.shapeless").copy().withStyle(ChatFormatting.BOLD), PAGE_W, 2);
+		check(font, lang, errors, "title_heading", Component.translatable("book.storageback.title_heading").copy().withStyle(ChatFormatting.BOLD), PAGE_W, 2);
+		check(font, lang, errors, "category.storage", Component.translatable("book.storageback.category.storage").copy().withStyle(ChatFormatting.BOLD), PAGE_W, 2);
+		check(font, lang, errors, "category.back", Component.translatable("book.storageback.category.back").copy().withStyle(ChatFormatting.BOLD), PAGE_W, 2);
+		check(font, lang, errors, "category.config", Component.translatable("book.storageback.category.config").copy().withStyle(ChatFormatting.BOLD), PAGE_W, 2);
+		for (Category category : contents.categories()) {
+			check(font, lang, errors, "category-label." + category.id(), category.title(), LIST_TEXT_W, 2);
+		}
 		for (Entry entry : contents.storageEntries()) {
 			int max = entry.links().isEmpty() ? MAX_BODY_LINES : MAX_BODY_LINES - 3;
-			if (entry.recipes().stream().anyMatch(RecipeGrid::balancing)) {
-				max -= 1;
+			check(font, lang, errors, "title." + entry.id(), entry.title().copy().withStyle(ChatFormatting.BOLD), TITLE_W, 4);
+			check(font, lang, errors, entry.id(), entry.body(), PAGE_W, max);
+			for (Link link : entry.links()) {
+				check(font, lang, errors, "link." + entry.id(), link.label(), PAGE_W, 3);
 			}
-			check(font, lang, errors, entry.id(), entry.body(), max);
 		}
 		for (Entry entry : contents.backEntries()) {
 			int max = entry.recipes().stream().anyMatch(RecipeGrid::balancing) ? MAX_BODY_LINES - 1 : MAX_BODY_LINES;
-			check(font, lang, errors, "back." + entry.id(), entry.body(), max);
+			check(font, lang, errors, "title.back." + entry.id(), entry.title().copy().withStyle(ChatFormatting.BOLD), TITLE_W, 4);
+			check(font, lang, errors, "back." + entry.id(), entry.body(), PAGE_W, max);
 		}
 		if (!errors.isEmpty()) {
 			throw new AssertionError("Guide book text overflows in " + lang + ":\n" + errors);
 		}
 	}
 
-	private static void check(Font font, String lang, StringBuilder errors, String name, Component text, int maxLines) {
-		int lines = font.split(text, PAGE_W).size();
-		System.out.println("[guide-book] " + lang + " " + name + " lines=" + lines + "/" + maxLines);
-		if (lines > maxLines) {
-			errors.append(" ").append(name).append(" has ").append(lines).append(" lines (max ").append(maxLines).append("): ")
+	private static void check(Font font, String lang, StringBuilder errors, String name, Component text, int width, int maxLines) {
+		List<FormattedCharSequence> lines = font.split(text, width);
+		int widest = 0;
+		for (FormattedCharSequence line : lines) {
+			widest = Math.max(widest, font.width(line));
+		}
+		System.out.println("[guide-book] " + lang + " " + name + " lines=" + lines.size() + "/" + maxLines + " width=" + widest + "/" + width);
+		if (lines.size() > maxLines) {
+			errors.append(" ").append(name).append(" has ").append(lines.size()).append(" lines (max ").append(maxLines).append("): ")
+					.append(text.getString().replace("\n", " / ")).append("\n");
+		}
+		if (widest > width) {
+			errors.append(" ").append(name).append(" has a line ").append(widest).append("px wide (max ").append(width).append("): ")
 					.append(text.getString().replace("\n", " / ")).append("\n");
 		}
 	}
