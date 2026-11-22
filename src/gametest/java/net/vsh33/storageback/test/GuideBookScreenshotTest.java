@@ -132,6 +132,9 @@ public class GuideBookScreenshotTest implements FabricClientGameTest {
 		openEntry(context, "magma");
 		shot(context, "magma-" + lang);
 
+		openEntry(context, "nether_wart");
+		shot(context, "nether-wart-" + lang);
+
 		context.runOnClient(mc -> {
 			if (mc.gui.screen() instanceof GuideBookScreen screen) {
 				screen.openConfig();

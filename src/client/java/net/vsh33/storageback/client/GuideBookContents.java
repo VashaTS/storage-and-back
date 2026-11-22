@@ -110,7 +110,8 @@ public final class GuideBookContents {
 				back("dark_prismarine", Items.DARK_PRISMARINE, Items.PRISMARINE_SHARD, 8, false, "dark_prismarine"),
 				back("magma", Items.MAGMA_BLOCK, Items.MAGMA_CREAM, 4, true, "magma"),
 				back("sandstone", Items.SANDSTONE, Items.SAND, 4, false, "sandstone"),
-				back("red_sandstone", Items.RED_SANDSTONE, Items.RED_SAND, 4, false, "red_sandstone"));
+				back("red_sandstone", Items.RED_SANDSTONE, Items.RED_SAND, 4, false, "red_sandstone"),
+				back("nether_wart", Items.NETHER_WART_BLOCK, Items.NETHER_WART, 9, false, "nether_wart"));
 
 		List<Category> categories = List.of(
 				new Category("storage", Location.storageList(), new ItemStack(ModBlocks.FLINT_BLOCK),

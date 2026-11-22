@@ -71,6 +71,7 @@
   "book.storageback.page.back.magma": "Daje 4 magmowe kremy.\n\nTo receptura balansująca; można ją wyłączyć w ustawieniach.",
   "book.storageback.page.back.sandstone": "Daje 4 piasek.",
   "book.storageback.page.back.red_sandstone": "Daje 4 czerwony piasek.",
+  "book.storageback.page.back.nether_wart": "Daje 9 brodawek netherowych.",
   "book.storageback.page.config.balancing": "Zmiany balansu (domyślnie włączone): Blok ametystu → 4 odłamki ametystu i Blok magmy → 4 magmowe kremy. Wyłączenie usuwa tylko te dwie.",
   "book.storageback.page.config.back": "Domyślnie włączone. Wszystkie receptury zamieniające blok z gry z powrotem w przedmioty, w tym obie balansujące.",
   "book.storageback.page.config.how": "Edytuj storageback.json w config albo Mod Menu, potem /reload."

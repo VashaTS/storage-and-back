@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0
+* Added a Nether Wart Block → 9 Nether Wart back recipe.
+
 ## 1.2.0
 * Added the Storage & Back Guide, crafted shapeless from 1 Book and 1 Flint Block. Right-click opens a read-only illustrated guidebook (two-page spread, clickable categories and entries, and visible crafting grids with item icons) covering every storage block, the back recipes, and the config toggles, in English and Polish.
 
