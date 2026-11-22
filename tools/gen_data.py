@@ -43,6 +43,7 @@ BACK = [
     ("magma_block", "magma_cream", 4, "balancing_changes"),
     ("sandstone", "sand", 4, None),
     ("red_sandstone", "red_sand", 4, None),
+    ("nether_wart_block", "nether_wart", 9, None),
 ]
 
 
@@ -247,6 +248,7 @@ def main():
         "book.storageback.page.back.magma": "Gives 4 Magma Cream.\n\nThis is a balancing recipe and can be turned off in the config.",
         "book.storageback.page.back.sandstone": "Gives 4 Sand.",
         "book.storageback.page.back.red_sandstone": "Gives 4 Red Sand.",
+        "book.storageback.page.back.nether_wart": "Gives 9 Nether Wart.",
         "book.storageback.page.config.balancing": "Balancing changes (on by default): Amethyst Block → 4 Amethyst Shards, and Magma Block → 4 Magma Cream. Turn this off to remove only those two.",
         "book.storageback.page.config.back": "On by default. Every recipe that turns a vanilla block back into its items, including the two balancing ones.",
         "book.storageback.page.config.how": "Edit storageback.json in config or Mod Menu, then /reload.",
@@ -302,6 +304,7 @@ def main():
         "book.storageback.page.back.magma": "Daje 4 magmowe kremy.\n\nTo receptura balansująca; można ją wyłączyć w ustawieniach.",
         "book.storageback.page.back.sandstone": "Daje 4 piasek.",
         "book.storageback.page.back.red_sandstone": "Daje 4 czerwony piasek.",
+        "book.storageback.page.back.nether_wart": "Daje 9 brodawek netherowych.",
         "book.storageback.page.config.balancing": "Zmiany balansu (domyślnie włączone): Blok ametystu → 4 odłamki ametystu i Blok magmy → 4 magmowe kremy. Wyłączenie usuwa tylko te dwie.",
         "book.storageback.page.config.back": "Domyślnie włączone. Wszystkie receptury zamieniające blok z gry z powrotem w przedmioty, w tym obie balansujące.",
         "book.storageback.page.config.how": "Edytuj storageback.json w config albo Mod Menu, potem /reload.",

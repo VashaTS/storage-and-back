@@ -55,6 +55,7 @@ One block (shapeless, anywhere in the grid) gives back the items it is made of:
 | Magma Block | 4 Magma Cream | ⚖️ |
 | Sandstone | 4 Sand |  |
 | Red Sandstone | 4 Red Sand |  |
+| Nether Wart Block | 9 Nether Wart |  |
 
 ⚖️ = balancing change. Amethyst Blocks generate in geodes and Magma Blocks generate in huge amounts in the Nether,
 so these two recipes make Amethyst Shards and Magma Cream much easier to get. They can be turned off in the config.
@@ -104,7 +105,7 @@ python3 tools/gen_textures.py  # regenerates the block textures
 python3 tools/gen_icon.py      # regenerates the mod icon and the docs/icons table icons
 ```
 
-The server game tests check that all 42 recipes and their recipe-book advancements load, that every recipe grid matches
+The server game tests check that all 43 recipes and their recipe-book advancements load, that every recipe grid matches
 **only** its own recipe among all crafting recipes of the game, that turning *Balancing changes* off and reloading removes exactly
 the two recipes, and the block properties (fuel, flammability, composting, falling, light).
 

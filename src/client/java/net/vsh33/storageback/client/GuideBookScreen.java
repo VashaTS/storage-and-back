@@ -211,35 +211,36 @@ public class GuideBookScreen extends Screen {
 
 	private void drawList(GuiGraphicsExtractor graphics, int mouseX, int mouseY, Component title, List<Entry> entries, Component intro) {
 		int lx = this.leftPos + LEFT;
-		int ly = this.topPos + TOP;
-		ly += this.drawTitle(graphics, lx, ly, PAGE_W, title);
-		if (intro != null) {
-			ly = this.drawWrapped(graphics, intro, lx, ly, PAGE_W, INK);
-			ly += 4;
-		}
-		int bottom = this.topPos + PAGE_BOTTOM;
-		int rightStart = intro != null ? this.topPos + TOP : ly;
-		int i = 0;
-		while (i < entries.size()) {
-			Entry entry = entries.get(i);
-			int height = this.linkRowHeight(false);
-			if (ly + height > bottom) {
-				break;
-			}
-			ly += this.drawLinkRow(graphics, lx, ly, PAGE_W, entry.icon(), this.listTitle(entry), Location.entry(entry.id()), mouseX, mouseY, false);
-			i++;
-		}
 		int rx = this.leftPos + RIGHT;
-		int ry = rightStart;
+		int top = this.topPos + TOP;
+		int bottom = this.topPos + PAGE_BOTTOM;
+		boolean introOnRight = intro != null && !listFitsWithIntroOnLeft(this.font, title, intro, entries.size());
+		int ly = top + this.drawTitle(graphics, lx, top, PAGE_W, title);
+		int ry = top;
+		if (intro != null) {
+			if (introOnRight) {
+				ry = this.drawWrapped(graphics, intro, rx, ry, PAGE_W, INK) + 4;
+			} else {
+				ly = this.drawWrapped(graphics, intro, lx, ly, PAGE_W, INK) + 4;
+			}
+		}
+		int i = 0;
+		i = this.drawListColumn(graphics, lx, ly, bottom, entries, i, mouseX, mouseY);
+		this.drawListColumn(graphics, rx, ry, bottom, entries, i, mouseX, mouseY);
+	}
+
+	private int drawListColumn(GuiGraphicsExtractor graphics, int x, int y, int bottom, List<Entry> entries, int start, int mouseX, int mouseY) {
+		int i = start;
 		while (i < entries.size()) {
 			Entry entry = entries.get(i);
 			int height = this.linkRowHeight(false);
-			if (ry + height > bottom) {
+			if (y + height > bottom) {
 				break;
 			}
-			ry += this.drawLinkRow(graphics, rx, ry, PAGE_W, entry.icon(), this.listTitle(entry), Location.entry(entry.id()), mouseX, mouseY, false);
+			y += this.drawLinkRow(graphics, x, y, PAGE_W, entry.icon(), this.listTitle(entry), Location.entry(entry.id()), mouseX, mouseY, false);
 			i++;
 		}
+		return i;
 	}
 
 	private int linkRowHeight(boolean spacious) {
@@ -573,9 +574,43 @@ public class GuideBookScreen extends Screen {
 		return false;
 	}
 
+	/** Title height used by {@link #drawTitle}: one 9px line per wrap, plus 4px underline padding. */
+	public static int titleHeight(Font font, Component title) {
+		return font.split(title.copy().withStyle(ChatFormatting.BOLD), PAGE_W).size() * 9 + 4;
+	}
+
 	/**
-	 * Fails the screenshot / content test if any translated body is too long for its page.
+	 * Whether the compact list layout can keep the intro under the title on the left
+	 * page and still show every entry (the right page then starts at the top).
 	 */
+	public static boolean listFitsWithIntroOnLeft(Font font, Component title, Component intro, int entryCount) {
+		int row = 16;
+		int leftY = TOP + titleHeight(font, title);
+		if (intro != null) {
+			leftY += font.split(intro, PAGE_W).size() * 9 + 4;
+		}
+		int left = Math.max(0, (PAGE_BOTTOM - leftY) / row);
+		int right = Math.max(0, (PAGE_BOTTOM - TOP) / row);
+		return left + right >= entryCount;
+	}
+
+	/** How many list entries would be drawn with the current two-column packing. */
+	public static int visibleListEntries(Font font, Component title, Component intro, int entryCount) {
+		int row = 16;
+		int leftY = TOP + titleHeight(font, title);
+		int rightY = TOP;
+		if (intro != null) {
+			int introH = font.split(intro, PAGE_W).size() * 9 + 4;
+			if (listFitsWithIntroOnLeft(font, title, intro, entryCount)) {
+				leftY += introH;
+			} else {
+				rightY += introH;
+			}
+		}
+		int visible = Math.max(0, (PAGE_BOTTOM - leftY) / row) + Math.max(0, (PAGE_BOTTOM - rightY) / row);
+		return Math.min(entryCount, visible);
+	}
+
 	/**
 	 * Fails the screenshot / content test if any translated string is too long for
 	 * its column, including links, footnotes, titles, headings and status lines.
@@ -617,6 +652,14 @@ public class GuideBookScreen extends Screen {
 			int max = entry.recipes().stream().anyMatch(RecipeGrid::balancing) ? MAX_BODY_LINES - 1 : MAX_BODY_LINES;
 			check(font, lang, errors, "title.back." + entry.id(), entry.title().copy().withStyle(ChatFormatting.BOLD), TITLE_W, 4);
 			check(font, lang, errors, "back." + entry.id(), entry.body(), PAGE_W, max);
+		}
+		int storageVisible = visibleListEntries(font, Component.translatable("book.storageback.category.storage"), null, contents.storageEntries().size());
+		if (storageVisible < contents.storageEntries().size()) {
+			errors.append(" storage list shows ").append(storageVisible).append(" of ").append(contents.storageEntries().size()).append(" entries\n");
+		}
+		int backVisible = visibleListEntries(font, Component.translatable("book.storageback.category.back"), Component.translatable("book.storageback.page.back.intro"), contents.backEntries().size());
+		if (backVisible < contents.backEntries().size()) {
+			errors.append(" back list shows ").append(backVisible).append(" of ").append(contents.backEntries().size()).append(" entries\n");
 		}
 		if (!errors.isEmpty()) {
 			throw new AssertionError("Guide book text overflows in " + lang + ":\n" + errors);
