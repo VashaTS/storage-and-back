@@ -10,7 +10,7 @@ public class StorageBackClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		GuideBookScreens.setOpener(() -> {
 			Minecraft minecraft = Minecraft.getInstance();
-			minecraft.gui.setScreen(new GuideBookScreen());
+			minecraft.setScreen(new GuideBookScreen());
 		});
 	}
 }

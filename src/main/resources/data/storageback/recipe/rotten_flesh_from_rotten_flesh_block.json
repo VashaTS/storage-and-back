@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:rotten_flesh_block"
+    {
+      "item": "storageback:rotten_flesh_block"
+    }
   ],
   "result": {
     "id": "minecraft:rotten_flesh",

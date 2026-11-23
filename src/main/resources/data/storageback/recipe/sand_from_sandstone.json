@@ -8,7 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "minecraft:sandstone"
+    {
+      "item": "minecraft:sandstone"
+    }
   ],
   "result": {
     "id": "minecraft:sand",

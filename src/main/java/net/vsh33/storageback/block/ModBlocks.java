@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
-import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
-import net.fabricmc.fabric.api.registry.CompostableRegistry;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.fabricmc.fabric.api.registry.FuelValueEvents;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -91,9 +91,9 @@ public final class ModBlocks {
 	private static Block register(String name, Function<BlockBehaviour.Properties, Block> factory, BlockBehaviour.Properties properties,
 			UnaryOperator<Item.Properties> itemProperties) {
 		ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, StorageBack.id(name));
-		Block block = Registry.register(BuiltInRegistries.BLOCK, blockKey, factory.apply(properties.setId(blockKey)));
+		Block block = Registry.register(BuiltInRegistries.BLOCK, blockKey, factory.apply(properties));
 		ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, StorageBack.id(name));
-		Item.Properties props = itemProperties.apply(new Item.Properties().setId(itemKey).useBlockDescriptionPrefix());
+		Item.Properties props = itemProperties.apply(new Item.Properties());
 		Registry.register(BuiltInRegistries.ITEM, itemKey, new BlockItem(block, props));
 		BLOCKS.add(block);
 		return block;
@@ -101,12 +101,10 @@ public final class ModBlocks {
 
 	public static void initialize() {
 		// Fuel: Charcoal Block like a Block of Coal (80 items), Blaze Rod Bundle = 9 blaze rods (108 items).
-		FuelValueEvents.BUILD.register((builder, context) -> {
-			builder.add(CHARCOAL_BLOCK, context.baseSmeltTime() * 80);
-			builder.add(BLAZE_ROD_BUNDLE, context.baseSmeltTime() * 108);
-		});
+		FuelRegistry.INSTANCE.add(CHARCOAL_BLOCK, 200 * 80);
+		FuelRegistry.INSTANCE.add(BLAZE_ROD_BUNDLE, 200 * 108);
 		// Composting chances: like a hay bale (85%) for plant bundles and crates, 65% for rotten flesh.
-		CompostableRegistry compost = CompostableRegistry.INSTANCE;
+		CompostingChanceRegistry compost = CompostingChanceRegistry.INSTANCE;
 		compost.add(SUGAR_CANE_BUNDLE, 0.85F);
 		compost.add(ROTTEN_FLESH_BLOCK, 0.65F);
 		for (Block crate : new Block[]{CARROT_CRATE, POTATO_CRATE, BEETROOT_CRATE, APPLE_CRATE}) {
@@ -123,13 +121,13 @@ public final class ModBlocks {
 			flammable.add(crate, 5, 20);
 		}
 
-		CreativeModeTab tab = FabricCreativeModeTab.builder()
+		CreativeModeTab tab = FabricItemGroup.builder()
 				.icon(() -> new ItemStack(FLINT_BLOCK))
 				.title(Component.translatable("itemGroup.storageback.storageback"))
 				.displayItems((params, output) -> BLOCKS.forEach(output::accept))
 				.build();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, TAB_KEY, tab);
-		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.BUILDING_BLOCKS).register(output -> BLOCKS.forEach(output::accept));
+		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register(output -> BLOCKS.forEach(output::accept));
 	}
 
 	private ModBlocks() {

@@ -8,7 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "minecraft:bricks"
+    {
+      "item": "minecraft:bricks"
+    }
   ],
   "result": {
     "id": "minecraft:brick",

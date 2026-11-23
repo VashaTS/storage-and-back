@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import net.fabricmc.fabric.api.gametest.v1.GameTest;
-import net.fabricmc.fabric.api.registry.CompostableRegistry;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.gametest.framework.GameTest;
+import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +24,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.vsh33.storageback.StorageBack;
 import net.vsh33.storageback.block.EnderPearlBlock;
@@ -33,7 +33,7 @@ import net.vsh33.storageback.item.ModItems;
 import net.vsh33.storageback.config.StorageBackConfig;
 
 /** Server game tests (./gradlew runGameTest, also run by ./gradlew build). */
-public class StorageBackServerTest {
+public class StorageBackServerTest implements FabricGameTest {
 	/** block id, ingredient item */
 	static final String[][] STORAGE = {
 			{"flint_block", "flint"}, {"sugar_cane_bundle", "sugar_cane"}, {"charcoal_block", "charcoal"},
@@ -54,12 +54,12 @@ public class StorageBackServerTest {
 	static final List<String> BALANCING = List.of("amethyst_shard_from_amethyst_block", "magma_cream_from_magma_block");
 
 	static Item item(String id) {
-		Identifier key = id.contains(":") ? Identifier.parse(id) : Identifier.withDefaultNamespace(id);
-		return BuiltInRegistries.ITEM.getValue(key);
+		ResourceLocation key = id.contains(":") ? ResourceLocation.parse(id) : ResourceLocation.withDefaultNamespace(id);
+		return BuiltInRegistries.ITEM.get(key);
 	}
 
 	static boolean hasRecipe(MinecraftServer server, String path) {
-		return server.getRecipeManager().byKey(ResourceKey.create(Registries.RECIPE, StorageBack.id(path))).isPresent();
+		return server.getRecipeManager().byKey(StorageBack.id(path)).isPresent();
 	}
 
 	/** Every recipe of this mod, with the grid that crafts it and the expected result. */
@@ -81,7 +81,7 @@ public class StorageBackServerTest {
 		return cases;
 	}
 
-	@GameTest
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
 	public void recipesAndAdvancementsLoad(GameTestHelper helper) {
 		MinecraftServer server = helper.getLevel().getServer();
 		for (Case c : cases()) {
@@ -96,7 +96,7 @@ public class StorageBackServerTest {
 	}
 
 	/** Every mod recipe is the ONLY crafting recipe (vanilla or mod) matching its grid, and gives the expected result. */
-	@GameTest
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
 	public void noRecipeConflicts(GameTestHelper helper) {
 		var level = helper.getLevel();
 		List<RecipeHolder<?>> crafting = level.getServer().getRecipeManager().getRecipes().stream()
@@ -107,14 +107,14 @@ public class StorageBackServerTest {
 				@SuppressWarnings("unchecked")
 				Recipe<CraftingInput> recipe = (Recipe<CraftingInput>) holder.value();
 				if (recipe.matches(c.input(), level)) {
-					matches.add(holder.id().identifier().toString());
+					matches.add(holder.id().toString());
 				}
 			}
 			helper.assertTrue(matches.equals(List.of("storageback:" + c.id())), "grid for " + c.id() + " matches " + matches);
 			@SuppressWarnings("unchecked")
 			CraftingRecipe recipe = (CraftingRecipe) level.getServer().getRecipeManager()
-					.byKey(ResourceKey.create(Registries.RECIPE, StorageBack.id(c.id()))).orElseThrow().value();
-			ItemStack out = recipe.assemble(c.input());
+					.byKey(StorageBack.id(c.id())).orElseThrow().value();
+			ItemStack out = recipe.assemble(c.input(), level.registryAccess());
 			helper.assertTrue(out.is(c.result()) && out.getCount() == c.count(),
 					c.id() + " should give " + c.count() + " " + c.result() + ", got " + out);
 		}
@@ -123,7 +123,7 @@ public class StorageBackServerTest {
 	}
 
 	/** Turning "Balancing changes" off and reloading data removes exactly the amethyst and magma cream recipes. */
-	@GameTest(maxTicks = 600)
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 600)
 	public void balancingToggleRemovesRecipes(GameTestHelper helper) {
 		MinecraftServer server = helper.getLevel().getServer();
 		StorageBackConfig config = StorageBackConfig.get();
@@ -153,40 +153,40 @@ public class StorageBackServerTest {
 		});
 	}
 
-	@GameTest
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
 	public void blockProperties(GameTestHelper helper) {
 		helper.assertTrue(ModBlocks.BLOCKS.size() == 13, "13 blocks expected, got " + ModBlocks.BLOCKS.size());
 		var flammable = FlammableBlockRegistry.getDefaultInstance();
 		for (Block b : new Block[]{ModBlocks.SUGAR_CANE_BUNDLE, ModBlocks.CHARCOAL_BLOCK, ModBlocks.LEATHER_BLOCK, ModBlocks.FEATHER_BLOCK,
 				ModBlocks.CARROT_CRATE, ModBlocks.POTATO_CRATE, ModBlocks.BEETROOT_CRATE, ModBlocks.APPLE_CRATE}) {
-			helper.assertTrue(flammable.get(b) != null && flammable.get(b).getBurnOdds() > 0, b + " should be flammable");
+			helper.assertTrue(flammable.get(b) != null && flammable.get(b).getBurnChance() > 0, b + " should be flammable");
 		}
-		helper.assertTrue(flammable.get(ModBlocks.FLINT_BLOCK) == null || flammable.get(ModBlocks.FLINT_BLOCK).getBurnOdds() == 0, "flint must not burn");
+		helper.assertTrue(flammable.get(ModBlocks.FLINT_BLOCK) == null || flammable.get(ModBlocks.FLINT_BLOCK).getBurnChance() == 0, "flint must not burn");
 		for (Block b : new Block[]{ModBlocks.SUGAR_CANE_BUNDLE, ModBlocks.ROTTEN_FLESH_BLOCK, ModBlocks.CARROT_CRATE, ModBlocks.POTATO_CRATE,
 				ModBlocks.BEETROOT_CRATE, ModBlocks.APPLE_CRATE}) {
-			Float chance = CompostableRegistry.INSTANCE.get(b);
+			Float chance = CompostingChanceRegistry.INSTANCE.get(b);
 			helper.assertTrue(chance != null && chance > 0, b + " should be compostable");
 		}
-		var fuel = helper.getLevel().fuelValues();
-		helper.assertTrue(fuel.burnDuration(new ItemStack(ModBlocks.CHARCOAL_BLOCK)) == 16000, "charcoal block burn time");
-		helper.assertTrue(fuel.burnDuration(new ItemStack(ModBlocks.BLAZE_ROD_BUNDLE)) == 21600, "blaze rod bundle burn time");
+		var fuel = AbstractFurnaceBlockEntity.getFuel();
+		helper.assertTrue(fuel.get(ModBlocks.CHARCOAL_BLOCK.asItem()) == 16000, "charcoal block burn time");
+		helper.assertTrue(fuel.get(ModBlocks.BLAZE_ROD_BUNDLE.asItem()) == 21600, "blaze rod bundle burn time");
 		helper.assertTrue(ModBlocks.BLAZE_ROD_BUNDLE.defaultBlockState().getLightEmission() > 0, "blaze rod bundle should glow");
 		var pearl = ModBlocks.ENDER_PEARL_BLOCK.defaultBlockState();
 		helper.assertFalse(Block.isShapeFullBlock(EnderPearlBlock.SHAPE), "ender pearl block must not be a full cube");
-		helper.assertTrue(pearl.propagatesSkylightDown(), "light should pass through the ender pearl block");
+		helper.assertTrue(pearl.propagatesSkylightDown(helper.getLevel(), BlockPos.ZERO), "light should pass through the ender pearl block");
 		helper.assertFalse(pearl.canOcclude(), "ender pearl block must not occlude neighbours");
-		helper.assertFalse(pearl.isSolidRender(), "ender pearl block must not be a solid render cube");
+		helper.assertFalse(pearl.isSolidRender(helper.getLevel(), BlockPos.ZERO), "ender pearl block must not be a solid render cube");
 		helper.succeed();
 	}
 
 	/** Charcoal Block and Blaze Rod Bundle work as furnace fuel. */
-	@GameTest(maxTicks = 40)
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 40)
 	public void fuel(GameTestHelper helper) {
 		Block[] fuels = {ModBlocks.CHARCOAL_BLOCK, ModBlocks.BLAZE_ROD_BUNDLE};
 		for (int i = 0; i < fuels.length; i++) {
 			BlockPos pos = new BlockPos(1 + i * 2, 1, 1);
 			helper.setBlock(pos, Blocks.FURNACE);
-			FurnaceBlockEntity furnace = helper.getBlockEntity(pos, FurnaceBlockEntity.class);
+			FurnaceBlockEntity furnace = helper.<FurnaceBlockEntity>getBlockEntity(pos);
 			furnace.setItem(0, new ItemStack(Items.RAW_IRON));
 			furnace.setItem(1, new ItemStack(fuels[i]));
 		}
@@ -194,7 +194,7 @@ public class StorageBackServerTest {
 			for (int i = 0; i < fuels.length; i++) {
 				BlockPos pos = new BlockPos(1 + i * 2, 1, 1);
 				helper.assertTrue(helper.getBlockState(pos).getValue(AbstractFurnaceBlock.LIT), fuels[i] + " should light the furnace");
-				FurnaceBlockEntity furnace = helper.getBlockEntity(pos, FurnaceBlockEntity.class);
+				FurnaceBlockEntity furnace = helper.<FurnaceBlockEntity>getBlockEntity(pos);
 				helper.assertTrue(furnace.getItem(1).isEmpty(), fuels[i] + " should be consumed as fuel");
 			}
 			helper.succeed();
@@ -202,7 +202,7 @@ public class StorageBackServerTest {
 	}
 
 	/** The Gunpowder Block falls like sand. */
-	@GameTest(maxTicks = 60)
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 60)
 	public void gunpowderFalls(GameTestHelper helper) {
 		helper.setBlock(new BlockPos(1, 1, 1), Blocks.STONE);
 		helper.setBlock(new BlockPos(1, 2, 1), Blocks.AIR);

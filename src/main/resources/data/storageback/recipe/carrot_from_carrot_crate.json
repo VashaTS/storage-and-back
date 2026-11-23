@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:carrot_crate"
+    {
+      "item": "storageback:carrot_crate"
+    }
   ],
   "result": {
     "id": "minecraft:carrot",

@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -31,30 +31,54 @@ loom {
 	}
 }
 
-fabricApi {
-	// Server game tests (./gradlew runGameTest, also part of ./gradlew build): recipes, conflicts, config toggle, block behaviour.
-	// Client game test (xvfb-run -a ./gradlew runClientGameTest): screenshots of every block.
-	configureTests {
-		createSourceSet = true
-		modId = "storageback-test"
-		enableGameTests = true
-		enableClientGameTests = true
-		eula = true
+sourceSets {
+	gametest {
+		compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output + sourceSets.client.compileClasspath + sourceSets.client.output
+		runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output + sourceSets.client.runtimeClasspath + sourceSets.client.output
+	}
+}
+
+loom {
+	mods {
+		"storageback-test" {
+			sourceSet sourceSets.gametest
+		}
+	}
+	runs {
+		// Server game tests: ./gradlew runGametest
+		gametest {
+			server()
+			name = "Game Test"
+			vmArg "-Dfabric-api.gametest"
+			vmArg "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml"
+			runDir "build/gametest"
+			source sourceSets.gametest
+		}
+		// Client smoke test with screenshots: xvfb-run ./gradlew runClientSmoke [-PsmokeLang=pl_pl]
+		clientSmoke {
+			client()
+			name = "Client Smoke"
+			vmArg "-Dstorageback.smoke=true"
+			vmArg "-Dstorageback.smokeShots=" + (project.findProperty("smokeShots") ?: "/workspace/snb-backport/" + project.minecraft_version)
+			vmArg "-Dstorageback.smokeLang=" + (project.findProperty("smokeLang") ?: "en_us")
+			runDir "build/clientsmoke"
+			source sourceSets.gametest
+		}
 	}
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	// OPTIONAL at runtime: the mod checks FabricLoader.isModLoaded before touching them.
-	compileOnly "maven.modrinth:cloth-config:${project.cloth_config_version}"
-	compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
+	modCompileOnly "maven.modrinth:cloth-config:${project.cloth_config_version}"
+	modCompileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
 	if (project.findProperty("withConfigMods") == "true") {
-		// ./gradlew runClient -PwithConfigMods=true  -> try the Mod Menu / Cloth Config screen in dev
-		localRuntime "maven.modrinth:cloth-config:${project.cloth_config_version}"
-		localRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
+		modLocalRuntime "maven.modrinth:cloth-config:${project.cloth_config_version}"
+		modLocalRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
 	}
 }
 
@@ -67,14 +91,16 @@ processResources {
 	}
 }
 
+def javaRelease = (project.java_release as String) as int
+
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+	it.options.release = javaRelease
 }
 
 java {
 	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.toVersion(javaRelease)
+	targetCompatibility = JavaVersion.toVersion(javaRelease)
 }
 
 jar {
@@ -83,15 +109,5 @@ jar {
 
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
-	}
-}
-
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			from components.java
-		}
-	}
-	repositories {
 	}
 }

@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:gunpowder_block"
+    {
+      "item": "storageback:gunpowder_block"
+    }
   ],
   "result": {
     "id": "minecraft:gunpowder",

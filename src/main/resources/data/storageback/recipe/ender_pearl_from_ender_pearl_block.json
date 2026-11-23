@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:ender_pearl_block"
+    {
+      "item": "storageback:ender_pearl_block"
+    }
   ],
   "result": {
     "id": "minecraft:ender_pearl",

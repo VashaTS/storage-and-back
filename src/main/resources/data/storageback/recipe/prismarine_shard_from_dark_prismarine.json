@@ -8,7 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "minecraft:dark_prismarine"
+    {
+      "item": "minecraft:dark_prismarine"
+    }
   ],
   "result": {
     "id": "minecraft:prismarine_shard",

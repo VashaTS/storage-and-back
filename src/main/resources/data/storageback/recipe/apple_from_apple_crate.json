@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:apple_crate"
+    {
+      "item": "storageback:apple_crate"
+    }
   ],
   "result": {
     "id": "minecraft:apple",

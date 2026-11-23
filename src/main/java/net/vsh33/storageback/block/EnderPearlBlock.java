@@ -157,7 +157,7 @@ public class EnderPearlBlock extends Block {
 	}
 
 	@Override
-	protected VoxelShape getOcclusionShape(BlockState state) {
+	protected VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
 		return Shapes.empty();
 	}
 
@@ -167,7 +167,7 @@ public class EnderPearlBlock extends Block {
 	}
 
 	@Override
-	protected boolean propagatesSkylightDown(BlockState state) {
+	protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
 		return true;
 	}
 }

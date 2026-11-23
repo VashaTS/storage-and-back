@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:flint_block"
+    {
+      "item": "storageback:flint_block"
+    }
   ],
   "result": {
     "id": "minecraft:flint",

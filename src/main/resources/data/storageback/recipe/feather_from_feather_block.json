@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:feather_block"
+    {
+      "item": "storageback:feather_block"
+    }
   ],
   "result": {
     "id": "minecraft:feather",

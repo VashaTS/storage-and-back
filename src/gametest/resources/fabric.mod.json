@@ -5,13 +5,11 @@
 	"name": "Storage & Back tests",
 	"environment": "*",
 	"entrypoints": {
-		"fabric-client-gametest": [
-			"net.vsh33.storageback.test.EnderPearlScreenshotTest",
-			"net.vsh33.storageback.test.StorageBackScreenshotTest",
-			"net.vsh33.storageback.test.GuideBookScreenshotTest"
-		],
 		"fabric-gametest": [
 			"net.vsh33.storageback.test.StorageBackServerTest"
+		],
+		"client": [
+			"net.vsh33.storageback.test.ClientSmokeTest"
 		]
 	},
 	"depends": {

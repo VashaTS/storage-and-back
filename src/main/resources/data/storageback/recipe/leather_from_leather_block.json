@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:leather_block"
+    {
+      "item": "storageback:leather_block"
+    }
   ],
   "result": {
     "id": "minecraft:leather",

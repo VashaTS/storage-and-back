@@ -2,7 +2,7 @@ package net.vsh33.storageback;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.vsh33.storageback.block.ModBlocks;
 import net.vsh33.storageback.item.ModItems;
 import net.vsh33.storageback.config.ConfigCondition;
@@ -18,8 +18,8 @@ public class StorageBack implements ModInitializer {
 	public static final String MOD_ID = "storageback";
 	public static final Logger LOGGER = LoggerFactory.getLogger("Storage & Back");
 
-	public static Identifier id(String path) {
-		return Identifier.fromNamespaceAndPath(MOD_ID, path);
+	public static ResourceLocation id(String path) {
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	@Override

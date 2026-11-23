@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:potato_crate"
+    {
+      "item": "storageback:potato_crate"
+    }
   ],
   "result": {
     "id": "minecraft:potato",

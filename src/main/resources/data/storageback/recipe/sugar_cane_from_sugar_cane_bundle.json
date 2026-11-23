@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "storageback:sugar_cane_bundle"
+    {
+      "item": "storageback:sugar_cane_bundle"
+    }
   ],
   "result": {
     "id": "minecraft:sugar_cane",

@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
-import net.minecraft.resources.RegistryOps;
+import net.minecraft.core.HolderLookup;
 import net.vsh33.storageback.StorageBack;
 
 /**
@@ -28,7 +28,7 @@ public record ConfigCondition(String option) implements ResourceCondition {
 	}
 
 	@Override
-	public boolean test(RegistryOps.RegistryInfoLookup registryInfo) {
+	public boolean test(HolderLookup.Provider registryLookup) {
 		StorageBackConfig config = StorageBackConfig.get();
 		return switch (option) {
 			case BALANCING_CHANGES -> config.balancingChanges;
