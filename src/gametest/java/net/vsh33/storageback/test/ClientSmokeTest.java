@@ -130,7 +130,10 @@ public class ClientSmokeTest implements ClientModInitializer {
 	}
 
 	private static void shot(String name) {
-		client(mc -> mc.getToasts().clear());
+		client(mc -> {
+			mc.getToasts().clear();
+			mc.gui.getChat().clearMessages(false);
+		});
 		waitTicks(3);
 		client(mc -> {
 			try (NativeImage image = Screenshot.takeScreenshot(mc.getMainRenderTarget())) {
@@ -242,7 +245,9 @@ public class ClientSmokeTest implements ClientModInitializer {
 		shot("storageback_bundles");
 		tp(125.4, 202.4, 3.8, 123.0, 200.0, 0.5);
 		shot("storageback_materials");
-		tp(161.85, 201.85, 6.15, 160.45, 201.55, 8.2);
+		// eye level with the block (spectators clip into the ground), looking through the gaps at the white wall
+		cmd("tp @p 161.6 199.95 6.4 27.6 2.0");
+		waitTicks(40);
 		shot("ender_pearl_block_close");
 
 		// Inventory: the guide book crafted in the 2x2 grid, ender pearl block held in hand.
