@@ -299,14 +299,7 @@ public class GuideBookScreen extends Screen {
 		int lx = this.leftPos + LEFT;
 		int ly = this.topPos + TOP;
 		this.drawLargeIcon(graphics, lx, ly, entry.icon(), mouseX, mouseY);
-		int titleX = lx + LARGE_ICON + 4;
-		List<FormattedCharSequence> titleLines = this.font.split(entry.title().copy().withStyle(ChatFormatting.BOLD), TITLE_W);
-		int titleY = ly + Math.max(0, (LARGE_ICON - titleLines.size() * 9) / 2);
-		for (FormattedCharSequence line : titleLines) {
-			graphics.text(this.font, line, titleX, titleY, INK, false);
-			titleY += 9;
-		}
-		int y = Math.max(ly + LARGE_ICON, titleY) + 4;
+		int y = this.drawEntryTitle(graphics, lx, ly, entry.title());
 		y = this.drawWrapped(graphics, entry.body(), lx, y, PAGE_W, INK);
 		if (!entry.links().isEmpty()) {
 			y += 6;
@@ -331,6 +324,56 @@ public class GuideBookScreen extends Screen {
 			int used = this.drawRecipe(graphics, rx, ry, grid, header, mouseX, mouseY);
 			ry += used + 8;
 		}
+	}
+
+	/**
+	 * Entry title next to the large icon when every word fits there (wrapping only between words), otherwise
+	 * under the icon across the whole page, so long names such as "Blok netherowych brodawek" never break mid-word.
+	 * Returns the y where the body text starts.
+	 */
+	private int drawEntryTitle(GuiGraphicsExtractor graphics, int lx, int ly, Component title) {
+		Component bold = title.copy().withStyle(ChatFormatting.BOLD);
+		if (titleBesideIcon(this.font, title)) {
+			List<FormattedCharSequence> lines = this.font.split(bold, TITLE_W);
+			int titleX = lx + LARGE_ICON + 4;
+			int titleY = ly + Math.max(0, (LARGE_ICON - lines.size() * 9) / 2);
+			for (FormattedCharSequence line : lines) {
+				graphics.text(this.font, line, titleX, titleY, INK, false);
+				titleY += 9;
+			}
+			return Math.max(ly + LARGE_ICON, titleY) + 4;
+		}
+		int y = ly + LARGE_ICON + 3;
+		for (FormattedCharSequence line : this.font.split(bold, PAGE_W)) {
+			graphics.text(this.font, line, lx, y, INK, false);
+			y += 9;
+		}
+		return y + 3;
+	}
+
+	/** True when the bold title wraps between words only and fits in the 4 lines next to the icon. */
+	public static boolean titleBesideIcon(Font font, Component title) {
+		Component bold = title.copy().withStyle(ChatFormatting.BOLD);
+		return wordsFit(font, bold, TITLE_W) && font.split(bold, TITLE_W).size() * 9 <= LARGE_ICON;
+	}
+
+	/** Extra body lines used up when the title goes under the icon instead of beside it. */
+	public static int titleExtraLines(Font font, Component title) {
+		if (titleBesideIcon(font, title)) {
+			return 0;
+		}
+		int lines = font.split(title.copy().withStyle(ChatFormatting.BOLD), PAGE_W).size();
+		return (2 + lines * 9 + 8) / 9;
+	}
+
+	/** Every space-separated word is narrower than {@code width}, so Font.split never has to cut inside a word. */
+	public static boolean wordsFit(Font font, Component text, int width) {
+		for (String word : text.getString().split("[ \\n]+")) {
+			if (!word.isEmpty() && font.width(Component.literal(word).withStyle(text.getStyle())) > width) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void drawLargeIcon(GuiGraphicsExtractor graphics, int x, int y, ItemStack stack, int mouseX, int mouseY) {
@@ -641,16 +684,16 @@ public class GuideBookScreen extends Screen {
 			check(font, lang, errors, "category-label." + category.id(), category.title(), LIST_TEXT_W, 2);
 		}
 		for (Entry entry : contents.storageEntries()) {
-			int max = entry.links().isEmpty() ? MAX_BODY_LINES : MAX_BODY_LINES - 3;
-			check(font, lang, errors, "title." + entry.id(), entry.title().copy().withStyle(ChatFormatting.BOLD), TITLE_W, 4);
+			int max = (entry.links().isEmpty() ? MAX_BODY_LINES : MAX_BODY_LINES - 3) - titleExtraLines(font, entry.title());
+			checkTitle(font, lang, errors, "title." + entry.id(), entry.title());
 			check(font, lang, errors, entry.id(), entry.body(), PAGE_W, max);
 			for (Link link : entry.links()) {
 				check(font, lang, errors, "link." + entry.id(), link.label(), PAGE_W, 3);
 			}
 		}
 		for (Entry entry : contents.backEntries()) {
-			int max = entry.recipes().stream().anyMatch(RecipeGrid::balancing) ? MAX_BODY_LINES - 1 : MAX_BODY_LINES;
-			check(font, lang, errors, "title.back." + entry.id(), entry.title().copy().withStyle(ChatFormatting.BOLD), TITLE_W, 4);
+			int max = (entry.recipes().stream().anyMatch(RecipeGrid::balancing) ? MAX_BODY_LINES - 1 : MAX_BODY_LINES) - titleExtraLines(font, entry.title());
+			checkTitle(font, lang, errors, "title.back." + entry.id(), entry.title());
 			check(font, lang, errors, "back." + entry.id(), entry.body(), PAGE_W, max);
 		}
 		int storageVisible = visibleListEntries(font, Component.translatable("book.storageback.category.storage"), null, contents.storageEntries().size());
@@ -666,7 +709,19 @@ public class GuideBookScreen extends Screen {
 		}
 	}
 
+	/** Entry title: beside the icon (max 4 lines) or under it (max 3 lines), never cut inside a word. */
+	private static void checkTitle(Font font, String lang, StringBuilder errors, String name, Component title) {
+		Component bold = title.copy().withStyle(ChatFormatting.BOLD);
+		boolean beside = titleBesideIcon(font, title);
+		System.out.println("[guide-book] " + lang + " " + name + " placement=" + (beside ? "beside icon" : "under icon"));
+		check(font, lang, errors, name, bold, beside ? TITLE_W : PAGE_W, beside ? 4 : 3);
+	}
+
 	private static void check(Font font, String lang, StringBuilder errors, String name, Component text, int width, int maxLines) {
+		if (!wordsFit(font, text, width)) {
+			errors.append(" ").append(name).append(" has a word wider than ").append(width).append("px (would break mid-word): ")
+					.append(text.getString().replace("\n", " / ")).append("\n");
+		}
 		List<FormattedCharSequence> lines = font.split(text, width);
 		int widest = 0;
 		for (FormattedCharSequence line : lines) {
