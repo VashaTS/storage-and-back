@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.1
+* Guide book: entry titles now wrap only between words. A title whose longest word does not fit next to the icon (for example the Polish "Blok netherowych brodawek") is written under the icon across the page instead of being cut mid-word. The text check now fails on any word that would be cut, in every title, heading and page, in English and Polish.
+
 ## 1.3.0+1.21.1
 * Backport of 1.3.0 to Minecraft 1.21.1 (Fabric Loader 0.15.11+, Fabric API, Java 21). Same blocks, recipes (all 43, including Nether Wart Block → 9 Nether Wart), config and guide book (English and Polish) as the 26.x builds.
 

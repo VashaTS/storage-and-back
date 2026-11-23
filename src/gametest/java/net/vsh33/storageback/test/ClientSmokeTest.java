@@ -300,13 +300,13 @@ public class ClientSmokeTest implements ClientModInitializer {
 		shot("book-index-" + lang);
 		book(GuideBookScreen::openStorageList);
 		shot("book-storage-" + lang);
-		for (String id : new String[]{"flint_block", "ender_pearl_block", "apple_crate"}) {
+		for (String id : new String[]{"flint_block", "ender_pearl_block", "blaze_rod_bundle", "apple_crate"}) {
 			book(s -> s.openEntry(id));
 			shot("book-" + id + "-" + lang);
 		}
 		book(GuideBookScreen::openBackList);
 		shot("book-back-list-" + lang);
-		for (String id : new String[]{"quartz", "dark_prismarine", "magma", "nether_wart"}) {
+		for (String id : new String[]{"quartz", "dark_prismarine", "prismarine_bricks", "magma", "nether_wart"}) {
 			book(s -> s.openEntry(id));
 			shot("book-" + id + "-" + lang);
 		}
