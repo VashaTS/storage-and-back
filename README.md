@@ -2,7 +2,7 @@
 
 <img src="docs/icon.png" width="128" align="right" alt="Storage & Back icon">
 
-A small Fabric mod for Minecraft **26.3** and **26.2** that fills two gaps in vanilla crafting:
+A small Fabric mod for Minecraft **26.3** and **26.2** (backports for **1.21.1** and **1.20.1**) that fills two gaps in vanilla crafting:
 
 * **Storage** – compact storage blocks for items that don't have one (flint, sugar cane, charcoal, gunpowder, blaze rods, leather, feathers, ender pearls, rotten flesh, carrots, potatoes, beetroots and apples).
 * **Back** – recipes that turn vanilla blocks back into the items they are crafted from (Block of Quartz → 4 Nether Quartz, Bricks → 4 Bricks, ...).
@@ -79,7 +79,7 @@ The toggles are implemented as a Fabric resource condition (`storageback:config`
 
 ## Installation
 
-* Fabric Loader 0.19.5+ and **Fabric API**.
+* Fabric Loader 0.15.11+ and **Fabric API** for Minecraft 1.21.1, Java 21 (this branch). The 26.2 build needs Loader 0.19.5+.
 * Optional: [Mod Menu](https://modrinth.com/mod/modmenu) and [Cloth Config](https://modrinth.com/mod/cloth-config) for the config screen.
 * The mod adds blocks, so it is needed **on both the server and every client**.
 
@@ -94,11 +94,14 @@ The toggles are implemented as a Fabric resource condition (`storageback:config`
 
 ## Building
 
-Branches: `master` → Minecraft 26.3, `26.2` → Minecraft 26.2. Java 25.
+Branches: `master` → Minecraft 26.3, `26.2` → Minecraft 26.2 (Java 25), `1.21.1` → Minecraft 1.21.1 (Java 21), `1.20.1` → Minecraft 1.20.1 (Java 17).
+This is the `1.21.1` branch.
 
 ```
 ./gradlew build                                      # jar in build/libs, also runs the server game tests
-SDL_VIDEODRIVER=offscreen ./gradlew runClientGameTest # real client: builds scenes and saves screenshots
+./gradlew runGametest                                # server game tests
+xvfb-run -a ./gradlew runClientSmoke                 # real client: blocks, guide book crafting, guide book in English and Polish; screenshots to /workspace/snb-backport/1.21.1
+# (the 1.21.4+ Fabric client game test API does not exist on 1.21.1, so this branch uses its own smoke test)
 python3 tools/gen_data.py      # regenerates blockstates, models, recipes, advancements, loot tables, tags, lang (also rebuilds the 9-pearl model)
 python3 tools/gen_pearl_model.py # just the Ender Pearl Block 3D model and texture
 python3 tools/gen_textures.py  # regenerates the block textures
