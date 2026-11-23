@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0+1.20.1
+* Backport of 1.3.0 to Minecraft 1.20.1 (Fabric Loader 0.15.11+, Fabric API, Java 17). Same blocks, recipes (all 43, including Nether Wart Block → 9 Nether Wart), config and guide book (English and Polish) as the 26.x builds.
+
 ## 1.3.0
 * Added a Nether Wart Block → 9 Nether Wart back recipe.
 
