@@ -1,0 +1,23 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "storageback:config",
+      "option": "back_recipes"
+    },
+    {
+      "condition": "storageback:config",
+      "option": "balancing_changes"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:amethyst_block"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "minecraft:amethyst_shard"
+  }
+}

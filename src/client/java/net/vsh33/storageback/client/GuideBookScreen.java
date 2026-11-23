@@ -129,7 +129,7 @@ public class GuideBookScreen extends Screen {
 		if (recordHistory && !GuideBookContents.same(this.location, target)) {
 			this.history.add(this.location);
 			if (this.history.size() > 64) {
-				this.history.removeFirst();
+				this.history.remove(0);
 			}
 		}
 		this.location = target;
@@ -140,7 +140,7 @@ public class GuideBookScreen extends Screen {
 		if (this.history.isEmpty()) {
 			return;
 		}
-		this.location = this.history.removeLast();
+		this.location = this.history.remove(this.history.size() - 1);
 		this.updateButtons();
 		this.pageSound();
 	}
@@ -172,13 +172,14 @@ public class GuideBookScreen extends Screen {
 
 	@Override
 	public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float a) {
+		// 1.20.1: Screen.render does not draw the background itself.
+		this.renderBackground(graphics);
+		this.renderBook(graphics, mouseX, mouseY);
 		super.render(graphics, mouseX, mouseY, a);
 		this.applyHoverTooltip(graphics, mouseX, mouseY);
 	}
 
-	@Override
-	public void renderBackground(final GuiGraphics graphics, final int mouseX, final int mouseY, final float a) {
-		this.renderTransparentBackground(graphics);
+	private void renderBook(final GuiGraphics graphics, final int mouseX, final int mouseY) {
 		graphics.blit(TEXTURE, this.leftPos, this.topPos, 0.0F, 0.0F, BOOK_W, BOOK_H, TEX, TEX);
 		this.hotspots.clear();
 		switch (this.location.section()) {

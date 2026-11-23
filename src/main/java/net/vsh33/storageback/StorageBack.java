@@ -19,13 +19,13 @@ public class StorageBack implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Storage & Back");
 
 	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+		return new ResourceLocation(MOD_ID, path);
 	}
 
 	@Override
 	public void onInitialize() {
 		StorageBackConfig.load();
-		ResourceConditions.register(ConfigCondition.TYPE);
+		ResourceConditions.register(ConfigCondition.ID, ConfigCondition::test);
 		ModBlocks.initialize();
 		ModItems.initialize();
 	}

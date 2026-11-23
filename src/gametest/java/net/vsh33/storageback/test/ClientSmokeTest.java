@@ -16,7 +16,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
-import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -177,14 +176,13 @@ public class ClientSmokeTest implements ClientModInitializer {
 			mc.createWorldOpenFlows().createFreshLevel(name,
 					new LevelSettings(name, GameType.CREATIVE, false, Difficulty.PEACEFUL, true, rules, WorldDataConfiguration.DEFAULT),
 					new WorldOptions(20260101L, true, false),
-					reg -> reg.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions(),
-					new TitleScreen());
+					reg -> reg.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions());
 		});
 		waitFor(mc -> mc.level != null && mc.player != null && mc.screen == null && mc.getSingleplayerServer() != null, 20 * 600, "world");
 		check(computeServer(s -> BuiltInRegistries.ITEM.containsKey(StorageBack.id("guide_book"))), "mod loaded: guide book registered");
-		long recipes = computeServer(s -> s.getRecipeManager().getRecipes().stream().filter(r -> r.id().getNamespace().equals(StorageBack.MOD_ID)).count());
+		long recipes = computeServer(s -> s.getRecipeManager().getRecipes().stream().filter(r -> r.getId().getNamespace().equals(StorageBack.MOD_ID)).count());
 		check(recipes == 43, "storageback recipes loaded: " + recipes + " / 43");
-		long adv = computeServer(s -> s.getAdvancements().getAllAdvancements().stream().filter(a -> a.id().getNamespace().equals(StorageBack.MOD_ID)).count());
+		long adv = computeServer(s -> s.getAdvancements().getAllAdvancements().stream().filter(a -> a.getId().getNamespace().equals(StorageBack.MOD_ID)).count());
 		check(adv == 43, "storageback recipe advancements loaded: " + adv + " / 43");
 		check(computeServer(s -> s.getRecipeManager().byKey(StorageBack.id("nether_wart_from_nether_wart_block")).isPresent()), "nether wart recipe loaded");
 

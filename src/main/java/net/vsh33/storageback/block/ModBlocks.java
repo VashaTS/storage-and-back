@@ -14,14 +14,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.ColorRGBA;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ColoredFallingBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -45,7 +43,7 @@ public final class ModBlocks {
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASEDRUM)
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F),
 			p -> p);
-	public static final Block GUNPOWDER_BLOCK = register("gunpowder_block", p -> new ColoredFallingBlock(new ColorRGBA(0xFF5A5A5A), p),
+	public static final Block GUNPOWDER_BLOCK = register("gunpowder_block", GunpowderBlock::new,
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).instrument(NoteBlockInstrument.SNARE)
 					.strength(0.5F).sound(SoundType.SAND),
 			p -> p);

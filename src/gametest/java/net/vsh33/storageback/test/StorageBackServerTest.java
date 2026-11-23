@@ -16,10 +16,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Block;
@@ -54,7 +56,7 @@ public class StorageBackServerTest implements FabricGameTest {
 	static final List<String> BALANCING = List.of("amethyst_shard_from_amethyst_block", "magma_cream_from_magma_block");
 
 	static Item item(String id) {
-		ResourceLocation key = id.contains(":") ? ResourceLocation.parse(id) : ResourceLocation.withDefaultNamespace(id);
+		ResourceLocation key = id.contains(":") ? new ResourceLocation(id) : new ResourceLocation("minecraft", id);
 		return BuiltInRegistries.ITEM.get(key);
 	}
 
@@ -63,7 +65,19 @@ public class StorageBackServerTest implements FabricGameTest {
 	}
 
 	/** Every recipe of this mod, with the grid that crafts it and the expected result. */
-	record Case(String id, CraftingInput input, Item result, int count) {
+	record Case(String id, CraftingContainer input, Item result, int count) {
+	}
+
+	// 1.20.1 stand-in for the 1.21 CraftingInput
+	private static final AbstractContainerMenu DUMMY_MENU = new AbstractContainerMenu(null, -1) {
+		@Override public ItemStack quickMoveStack(Player player, int slot) { return ItemStack.EMPTY; }
+		@Override public boolean stillValid(Player player) { return true; }
+	};
+
+	static CraftingContainer craftInput(int w, int h, List<ItemStack> items) {
+		CraftingContainer c = new TransientCraftingContainer(DUMMY_MENU, w, h);
+		for (int i = 0; i < items.size(); i++) c.setItem(i, items.get(i));
+		return c;
 	}
 
 	static List<Case> cases() {
@@ -71,13 +85,13 @@ public class StorageBackServerTest implements FabricGameTest {
 		for (String[] s : STORAGE) {
 			Item block = item(StorageBack.MOD_ID + ":" + s[0]);
 			Item ing = item(s[1]);
-			cases.add(new Case(s[0], CraftingInput.of(3, 3, Collections.nCopies(9, new ItemStack(ing))), block, 1));
-			cases.add(new Case(s[1] + "_from_" + s[0], CraftingInput.of(1, 1, List.of(new ItemStack(block))), ing, 9));
+			cases.add(new Case(s[0], craftInput(3, 3, Collections.nCopies(9, new ItemStack(ing))), block, 1));
+			cases.add(new Case(s[1] + "_from_" + s[0], craftInput(1, 1, List.of(new ItemStack(block))), ing, 9));
 		}
 		for (String[] b : BACK) {
-			cases.add(new Case(b[1] + "_from_" + b[0], CraftingInput.of(1, 1, List.of(new ItemStack(item(b[0])))), item(b[1]), Integer.parseInt(b[2])));
+			cases.add(new Case(b[1] + "_from_" + b[0], craftInput(1, 1, List.of(new ItemStack(item(b[0])))), item(b[1]), Integer.parseInt(b[2])));
 		}
-		cases.add(new Case("guide_book", CraftingInput.of(1, 2, List.of(new ItemStack(Items.BOOK), new ItemStack(ModBlocks.FLINT_BLOCK))), ModItems.GUIDE_BOOK, 1));
+		cases.add(new Case("guide_book", craftInput(1, 2, List.of(new ItemStack(Items.BOOK), new ItemStack(ModBlocks.FLINT_BLOCK))), ModItems.GUIDE_BOOK, 1));
 		return cases;
 	}
 
@@ -87,7 +101,7 @@ public class StorageBackServerTest implements FabricGameTest {
 		for (Case c : cases()) {
 			helper.assertTrue(hasRecipe(server, c.id()), "missing recipe storageback:" + c.id());
 			String folder = (c.id().contains("_from_") || c.id().equals("guide_book")) ? "misc" : "building_blocks";
-			helper.assertTrue(server.getAdvancements().get(StorageBack.id("recipes/" + folder + "/" + c.id())) != null,
+			helper.assertTrue(server.getAdvancements().getAdvancement(StorageBack.id("recipes/" + folder + "/" + c.id())) != null,
 					"missing recipe advancement for " + c.id());
 		}
 		helper.assertTrue(cases().size() == 43, "expected 43 recipes, got " + cases().size());
@@ -99,21 +113,21 @@ public class StorageBackServerTest implements FabricGameTest {
 	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
 	public void noRecipeConflicts(GameTestHelper helper) {
 		var level = helper.getLevel();
-		List<RecipeHolder<?>> crafting = level.getServer().getRecipeManager().getRecipes().stream()
-				.filter(h -> h.value().getType() == RecipeType.CRAFTING).toList();
+		List<Recipe<?>> crafting = level.getServer().getRecipeManager().getRecipes().stream()
+				.filter(h -> h.getType() == RecipeType.CRAFTING).toList();
 		for (Case c : cases()) {
 			List<String> matches = new ArrayList<>();
-			for (RecipeHolder<?> holder : crafting) {
+			for (Recipe<?> holder : crafting) {
 				@SuppressWarnings("unchecked")
-				Recipe<CraftingInput> recipe = (Recipe<CraftingInput>) holder.value();
+				Recipe<CraftingContainer> recipe = (Recipe<CraftingContainer>) holder;
 				if (recipe.matches(c.input(), level)) {
-					matches.add(holder.id().toString());
+					matches.add(holder.getId().toString());
 				}
 			}
 			helper.assertTrue(matches.equals(List.of("storageback:" + c.id())), "grid for " + c.id() + " matches " + matches);
 			@SuppressWarnings("unchecked")
 			CraftingRecipe recipe = (CraftingRecipe) level.getServer().getRecipeManager()
-					.byKey(StorageBack.id(c.id())).orElseThrow().value();
+					.byKey(StorageBack.id(c.id())).orElseThrow();
 			ItemStack out = recipe.assemble(c.input(), level.registryAccess());
 			helper.assertTrue(out.is(c.result()) && out.getCount() == c.count(),
 					c.id() + " should give " + c.count() + " " + c.result() + ", got " + out);
@@ -136,7 +150,7 @@ public class StorageBackServerTest implements FabricGameTest {
 				helper.assertTrue(off.isDone(), "waiting for reload");
 				for (String id : BALANCING) {
 					helper.assertFalse(hasRecipe(server, id), id + " must be gone when balancing changes are off");
-					helper.assertTrue(server.getAdvancements().get(StorageBack.id("recipes/misc/" + id)) == null, "advancement for " + id + " must be gone");
+					helper.assertTrue(server.getAdvancements().getAdvancement(StorageBack.id("recipes/misc/" + id)) == null, "advancement for " + id + " must be gone");
 				}
 				for (Case c : cases()) {
 					if (!BALANCING.contains(c.id())) {
@@ -186,7 +200,7 @@ public class StorageBackServerTest implements FabricGameTest {
 		for (int i = 0; i < fuels.length; i++) {
 			BlockPos pos = new BlockPos(1 + i * 2, 1, 1);
 			helper.setBlock(pos, Blocks.FURNACE);
-			FurnaceBlockEntity furnace = helper.<FurnaceBlockEntity>getBlockEntity(pos);
+			FurnaceBlockEntity furnace = (FurnaceBlockEntity) helper.getBlockEntity(pos);
 			furnace.setItem(0, new ItemStack(Items.RAW_IRON));
 			furnace.setItem(1, new ItemStack(fuels[i]));
 		}
@@ -194,7 +208,7 @@ public class StorageBackServerTest implements FabricGameTest {
 			for (int i = 0; i < fuels.length; i++) {
 				BlockPos pos = new BlockPos(1 + i * 2, 1, 1);
 				helper.assertTrue(helper.getBlockState(pos).getValue(AbstractFurnaceBlock.LIT), fuels[i] + " should light the furnace");
-				FurnaceBlockEntity furnace = helper.<FurnaceBlockEntity>getBlockEntity(pos);
+				FurnaceBlockEntity furnace = (FurnaceBlockEntity) helper.getBlockEntity(pos);
 				helper.assertTrue(furnace.getItem(1).isEmpty(), fuels[i] + " should be consumed as fuel");
 			}
 			helper.succeed();
