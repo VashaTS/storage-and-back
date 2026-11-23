@@ -115,6 +115,9 @@ public class GuideBookScreenshotTest implements FabricClientGameTest {
 		openEntry(context, "ender_pearl_block");
 		shot(context, "ender-" + lang);
 
+		openEntry(context, "blaze_rod_bundle");
+		shot(context, "blaze-rod-bundle-" + lang);
+
 		context.runOnClient(mc -> {
 			if (mc.gui.screen() instanceof GuideBookScreen screen) {
 				screen.openBackList();
@@ -128,6 +131,9 @@ public class GuideBookScreenshotTest implements FabricClientGameTest {
 
 		openEntry(context, "dark_prismarine");
 		shot(context, "dark-prismarine-" + lang);
+
+		openEntry(context, "prismarine_bricks");
+		shot(context, "prismarine-bricks-" + lang);
 
 		openEntry(context, "magma");
 		shot(context, "magma-" + lang);
